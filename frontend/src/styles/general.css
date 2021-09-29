@@ -1,0 +1,39 @@
+.sticky-header {
+    position: sticky;
+    top: 0;
+}
+
+/* for semantic ui table */
+/*.no-border, .no-border tbody>tr>* {
+    border: none !important;
+}*/
+
+.no-border, .no-border *>tr>* {
+    border: none !important;
+}
+
+.no-border ul {
+    margin-top: 0 !important;
+    padding-left: 1.25em !important;
+}
+
+.no-padding-left tbody>tr>td {
+    padding-left: 0 !important;
+}
+
+.low-line-height {
+    line-height: .5em;
+}
+
+.medium-line-height {
+    line-height: .75em;
+}
+
+.health-rating-text-inline::before {
+    margin-left: .5em;
+    content: "(";
+}
+
+.health-rating-text-inline::after {
+    content: ")";
+}
