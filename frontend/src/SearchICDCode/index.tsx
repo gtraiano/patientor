@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { apiBaseUrl } from '../constants';
-import { Form, List, Button, Segment, Label } from 'semantic-ui-react';
+import { Form, Segment, Label, SearchResults } from 'semantic-ui-react';
 import { useStateValue, addDiagnosis } from '../state';
 import { Diagnosis } from '../types/types';
+import SearchResultsList from './SearchResultsList';
 
-interface SearchResults {
+export interface SearchResults {
     terms: string | undefined,
     results: Array<{ name: string, desc: string }>,
     error?: string | undefined
 }
 
-interface ICDCodeLookupResult {
-    /* returned when search by term */
+interface ICDCodeLookupResults {
+    /* returned when searching by term */
     terms?: string,
     results?: Array<{ name: string, desc: string }>,
-    /* returned when search by code */
+    /* returned when searching by code */
     code?: { name: string, desc: string },
     to?: { codes: Array<{ name: string, desc: string }> }
     subcodes?: Array<{ name: string, desc: string }>
@@ -30,9 +31,9 @@ const SearchICDCode = () => {
     // used for debouncing icdcodelookup api calls
     let typingTimer: ReturnType<typeof setTimeout>;
     const inputRef = React.useRef<HTMLInputElement | null>(null);
-    const doneTypingInterval = 450;
+    const doneTypingInterval = 750;
 
-    const extractResults = (data: ICDCodeLookupResult): SearchResults => {
+    const extractResults = (data: ICDCodeLookupResults): SearchResults => {
         if(data.terms) {
             return {
                 results: data?.results?.map(({ name, desc }) => ({ name: name, desc: desc })) || [],
@@ -57,8 +58,6 @@ const SearchICDCode = () => {
                 results: []
             };
         }
-        /*else
-            throw Error('Cannot parse ICD Code lookup results');*/
     };
 
     const updateResultsList = async (terms: string) => {
@@ -69,13 +68,7 @@ const SearchICDCode = () => {
                 const { data: searchResultsFromApi } = await axios.post<SearchResults>(`${apiBaseUrl}/icdclookup`, { terms });
                 setFetching(false);
 
-                //console.log('extractResults', extractResults(searchResultsFromApi as any));
                 const extracted = extractResults(searchResultsFromApi);
-                
-                /*setResults({
-                    results: searchResultsFromApi?.results?.map(({ name, desc }) => ({ name, desc })) || [],
-                    terms: searchResultsFromApi.terms || terms
-                });*/
                 setResults({
                     ...extracted,
                     terms: extracted.terms || terms
@@ -128,36 +121,20 @@ const SearchICDCode = () => {
                     autoComplete="off"
                     id="search-term"
                     name="search-term"
-                    //onChange={(e) => setTimeout(() => void updateResultsList(e.target.value.trim()), 1000)}
                     onKeyUp={e => onKeyUp(e)}
                 />
             </Form.Field>
             <div
                 id='results-div'
-                style={{ minHeight: 'max-content', maxHeight: '50vh', overflow: 'auto' }}
+                style={{ minHeight: '10vh', maxHeight: '50vh', overflow: 'auto' }}
                 className={fetching ? 'ui segment loading' : undefined}
             >
                 {error && <Segment inverted color="red">{`Error: ${error}`}</Segment>}
-                <List divided verticalAlign='middle'>
-                    {
-                        results.length > 0
-                            ? results.map(({ name, desc }, i) =>
-                                <List.Item key={`${name}_${i}`}>
-                                    <List.Content floated='right'>
-                                        <Button
-                                            disabled={added[i]}
-                                            onClick={() => { void addToDiagnoses({ name, desc }, i); }}
-                                        >
-                                            Add
-                                        </Button>
-                                    </List.Content>
-                                    <List.Header>{name}</List.Header>
-                                    <List.Description><span>{desc}</span></List.Description>
-                                </List.Item>
-                            )
-                            : terms !== undefined ? `no results for "${terms}"` : null
-                    }
-                </List>
+                <SearchResultsList
+                    results={{terms, results}}
+                    onAdd={addToDiagnoses}
+                    added={added}
+                />
             </div>
             <div style={{ marginTop: '2vh' }}>
                 <Label color='blue'>

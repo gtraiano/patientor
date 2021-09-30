@@ -90,7 +90,7 @@ const PatientInfo = () => {
             open: false,
             content: ''
         });
-      };
+    };
     
     const openConfirm = (message: string, header: string | null | undefined, onConfirm?: () => void, onCancel?: () => void): void => {
         setConfirm({
