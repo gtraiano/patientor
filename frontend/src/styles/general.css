@@ -31,9 +31,11 @@
 
 .health-rating-text-inline::before {
     margin-left: .5em;
+    user-select: text;
     content: "(";
 }
 
 .health-rating-text-inline::after {
     content: ")";
+    user-select:all;
 }
