@@ -273,11 +273,6 @@ const PatientInfo = () => {
                             }
                         />
                     </h2>
-                    {/*<p>
-                        ssn: {patients[patientId].ssn}<br/>
-                        occupation: {patients[patientId].occupation}<br/>
-                        date of birth: {patients[patientId].dateOfBirth}
-                    </p>*/}
                     <Table collapsing compact singleLine className="no-border no-padding-left low-line-height">
                         <Table.Body>
                             <Table.Row>
