@@ -1,11 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { EntryType, BaseEntry } from '../../types';
-//import { BaseEntry } from '../types';
 
 export interface BaseEntryDoc extends BaseEntry, Document {
     id: string
 };
-//export interface IHealthCheckEntryModel extends Model<IHealthCheckEntryDoc> {};
 
 export const BaseEntrySchema: Schema = new Schema<BaseEntryDoc>({
     description: {
@@ -22,7 +20,7 @@ export const BaseEntrySchema: Schema = new Schema<BaseEntryDoc>({
     },
     diagnosisCodes: {
         type: [String],
-        ref: 'Diagnosis',
+        //ref: 'Diagnosis',
         required: false,
         //default: []
     },

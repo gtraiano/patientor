@@ -8,12 +8,12 @@ export type EntryDoc = HospitalEntryDoc | HealthCheckEntryDoc | OccupationalHeal
 
 export const EntrySchema = new Schema<EntryDoc>();
 
-/*EntrySchema.set('toJSON', {
+EntrySchema.set('toJSON', {
     transform: (_document, returnedObject) => {
       returnedObject.id = returnedObject._id.toString();
       delete returnedObject._id;
       delete returnedObject.__v;
     }
-});*/
+});
 
 export default mongoose.model<EntryDoc>('Entry', EntrySchema);
