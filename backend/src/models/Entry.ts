@@ -67,15 +67,11 @@ export const EntrySchema = new Schema<Entry>({
     sickLeave: {
         startDate: {
             type: String,
-            required: function(this: Entry) {
-                return this.type === EntryType.OccupationalHealthcare
-            }
+            required: false
         },
         endDate: {
             type: String,
-            required: function(this: Entry) {
-                return this.type === EntryType.OccupationalHealthcare
-            }
+            required: false
         }
     }
 });

@@ -137,12 +137,6 @@ const AddEntryForm = ({ onSubmit, onCancel, initialValues }: Props) => {
                     if(!values.employerName) {
                         errors.employerName = requiredError;   
                     }
-                    if(values.sickLeave) {
-                        if(!values.sickLeave.startDate) 
-                            errors.sickLeave = Object.assign({ startDate: requiredError }, errors.sickLeave);
-                        if(!values.sickLeave.endDate)
-                            errors.sickLeave = Object.assign({ endDate: requiredError }, errors.sickLeave);
-                    }
                 }
 
                 return errors;
