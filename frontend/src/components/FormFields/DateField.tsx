@@ -40,7 +40,7 @@ export const DateField = ({
     useEffect(() => { // initialize date from field prop
       if(field.value !== undefined || field.value !== null) {
         setFieldValue(field.name, dateFormatter(field.value));
-        setFieldTouched(field.name, true);  
+        setFieldTouched(field.name, false);
       }
     }, []);
   
