@@ -43,10 +43,11 @@ const PatientEntryCard = ({ entry, actions }: Props) => {
                 {/*<ul>{entry.diagnosisCodes?.map((c,index) => <li key={index}>{Object.values(c).slice(0,2).join(' ')}</li>)}</ul>*/}
                 {/*<ul>{entry.diagnosisCodes?.map((code, index) => <li key={index}>{code} {diagnoses[code].name}</li>)}</ul>*/}
                 <Table collapsing compact singleLine={false} className="no-border no-padding-left medium-line-height">
-                    <Table.Body as="ul">
+                    <Table.Body>
                         {entry.diagnosisCodes?.map((code, index) =>
                             <Table.Row key={index}>
-                                <Table.Cell as="li">{code}</Table.Cell>
+                                <Table.Cell style={{ paddingTop: '.3em' }}><Icon fitted name="circle" size="tiny"/></Table.Cell>
+                                <Table.Cell>{code}</Table.Cell>
                                 <Table.Cell>{diagnoses[code].name}</Table.Cell>
                             </Table.Row>
                         )}
