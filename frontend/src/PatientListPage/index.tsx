@@ -46,7 +46,7 @@ const PatientListPage = () => {
 
       {/* patient filter tool */}
       <div style={{ width: '100%', display: 'inline-flex', justifyContent: 'flex-end', position: 'absolute', top: '-.25rem', right: '0' }}>
-        <div style={{ display: filter?.show ? 'inline-block' : 'none', width: '25%', marginInlineEnd: '.25em' }}>
+        <div style={{ display: 'inline-block', opacity: Number(filter.show), width: '25%', marginInlineEnd: '.25em', transition: '.2s' }}>
           <Input
             value={filter.value}
             fluid
@@ -56,18 +56,18 @@ const PatientListPage = () => {
           />
         </div>
         <div
-          style={{ display: filter.show ? 'inherit' : 'none', cursor: 'pointer' }}
-          onClick={() => setFilter({ ...filter, value: '' })}
+          style={{ display: 'inherit', opacity: Number(filter.show), cursor: filter.value ? 'pointer' : 'auto' }}
+          onClick={() => filter.value && setFilter({ ...filter, value: '' })}
           title="clear filter"
         >
-          <Icon name="close" style={{ marginTop: '.5em' }}/>
+          <Icon name="close" inverted={!filter.value} color={filter.value === '' ? 'grey' : 'black'} style={{ marginTop: '.5em' }}/>
         </div>
         <div
           style={{ cursor: 'pointer' }}
           onClick={() => setFilter({ ...filter, show: !filter?.show })}
           title={`filtering is ${filter.value ? 'on' : 'off'}`}
         >
-          <Icon name="filter" style={{ marginTop: '.5em' }} color={filter.value === '' ? 'grey' : 'black'}/>
+          <Icon name="filter" inverted={!filter.show} style={{ marginTop: '.5em', transform: `scale(${filter.show ? 1 : 0.8})`, transition: '.2s' }} color={filter.value === '' ? 'grey' : 'black'}/>
         </div>
       </div>
 
