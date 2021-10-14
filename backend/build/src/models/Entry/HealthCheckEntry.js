@@ -24,14 +24,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const types_1 = require("../../types");
 const BaseEntry_1 = require("./BaseEntry");
 ;
-//export interface IHealthCheckEntryModel extends Model<IHealthCheckEntryDoc> {};
-exports.HealthCheckEntrySchema = new mongoose_1.Schema(Object.assign(Object.assign({}, BaseEntry_1.BaseEntrySchema.obj), { 
-    /*type: {
-        type: String,
-        default: EntryType.HealthCheck,
-        required: true
-    },*/
-    healthCheckRating: {
+exports.HealthCheckEntrySchema = new mongoose_1.Schema(Object.assign(Object.assign({}, BaseEntry_1.BaseEntrySchema.obj), { healthCheckRating: {
         type: Number,
         required: true,
         enum: {
@@ -40,13 +33,3 @@ exports.HealthCheckEntrySchema = new mongoose_1.Schema(Object.assign(Object.assi
         }
     } }));
 exports.default = mongoose_1.default.model('HealthCheckEntry', exports.HealthCheckEntrySchema);
-/*HealthCheckEntrySchema.set('toJSON', {
-    transform: (_document, returnedObject) => {
-      //returnedObject.id = returnedObject._id.toString()
-      delete returnedObject._id
-      delete returnedObject.__v
-    }
-});
-
-//export default mongoose.model<IHealthCheckEntry>('HealthCheckEntry', HealthCheckEntrySchema);
-export default mongoose.model<HealthCheckEntry>('HealthCheckEntry', HealthCheckEntrySchema);*/ 

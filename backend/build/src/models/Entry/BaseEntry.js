@@ -23,7 +23,6 @@ exports.BaseEntrySchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const types_1 = require("../../types");
 ;
-//export interface IHealthCheckEntryModel extends Model<IHealthCheckEntryDoc> {};
 exports.BaseEntrySchema = new mongoose_1.Schema({
     description: {
         type: String,
@@ -39,9 +38,7 @@ exports.BaseEntrySchema = new mongoose_1.Schema({
     },
     diagnosisCodes: {
         type: [String],
-        ref: 'Diagnosis',
-        required: false,
-        //default: []
+        required: false
     },
     type: {
         type: String,

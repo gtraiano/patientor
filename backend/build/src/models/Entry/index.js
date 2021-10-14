@@ -18,33 +18,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.EntrySchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
-const DiagnosisSchema = new mongoose_1.Schema({
-    code: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    name: {
-        type: String,
-        required: true
-    },
-    latin: {
-        type: String,
-        required: false
-    }
-});
-DiagnosisSchema.set('toJSON', {
+exports.EntrySchema = new mongoose_1.Schema();
+exports.EntrySchema.set('toJSON', {
     transform: (_document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
         delete returnedObject._id;
         delete returnedObject.__v;
     }
 });
-DiagnosisSchema.plugin(mongoose_unique_validator_1.default);
-exports.default = mongoose_1.default.model('Diagnosis', DiagnosisSchema, 'Diagnoses');
+exports.default = mongoose_1.default.model('Entry', exports.EntrySchema);
