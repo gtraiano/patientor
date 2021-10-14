@@ -20,9 +20,7 @@ export const BaseEntrySchema: Schema = new Schema<BaseEntryDoc>({
     },
     diagnosisCodes: {
         type: [String],
-        //ref: 'Diagnosis',
-        required: false,
-        //default: []
+        required: false
     },
     type: {
         type: String,
