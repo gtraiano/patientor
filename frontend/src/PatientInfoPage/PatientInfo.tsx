@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { addPatient, removePatient, useStateValue } from "../state";
 import { Gender, Patient, EntryType, Entry, HealthCheckRating } from "../types/types";
 import { apiBaseUrl } from "../constants";
-import { Button, CardGroup, Confirm, ConfirmProps, Icon, Table } from "semantic-ui-react";
+import { Button, CardGroup, Confirm, ConfirmProps, Icon, Loader, Table } from "semantic-ui-react";
 import PatientEntryCard, { EntryAction } from "../components/PatientEntryCard";
 import AddPatientEntry from "../AddPatientEntryModal";
 import { EntryFormValues } from "../AddPatientEntryModal/AddEntryForm";
@@ -31,6 +31,7 @@ const PatientInfo = () => {
     const [initialValues, setInitialValues] = useState<EntryFormValues | PatientFormValues | undefined>(undefined);
     const [confirm, setConfirm] = useState<ConfirmProps>({}); // confirmation modal props
     const history = useHistory();
+    const [fetching, setFetching] = React.useState<boolean>(false);
     
     const entryActions: EntryAction[] = [
         { label: 'edit', iconName: 'edit', callback: (entry) => onEditEntry ? void onEditEntry(entry) : undefined },
@@ -108,7 +109,6 @@ const PatientInfo = () => {
     const renderPatientEntries = () => {
         return (
             <React.Fragment>
-                <h3>entries</h3>                
                 {patients[patientId].entries && patients[patientId].entries.length > 0
 
                     ? <CardGroup>
@@ -228,9 +228,11 @@ const PatientInfo = () => {
         };
 
         if(!patients[patientId] || !patients[patientId].entries) {
+            setFetching(true);
             void fetchPatientInfo().then(data => {
                 dispatch(addPatient(data as Patient));
             });
+            setFetching(false);
         }
         //setConfirm({ ...confirm, onCancel: closeConfirm });
     }, []);
@@ -300,7 +302,14 @@ const PatientInfo = () => {
                         add entry
                     </Button>
                     </div>
-                <div>{renderPatientEntries()}</div>
+                <div>
+                    <h3>entries</h3>
+                    {fetching
+                        ? <Loader active content='Fetching entries' />
+                        : renderPatientEntries()
+                    }
+                    
+                </div>
             </div>
             <AddPatientEntry modalOpen={entryModalOpen} onSubmit={onSubmitEntry} onClose={closeEntryModal} initialValues={initialValues as EntryFormValues} />
             <AddPatientModal modalOpen={patientModalOpen} onSubmit={onSubmitPatient} onClose={closePatientModal} error={error} initialValues={initialValues as PatientFormValues} />
