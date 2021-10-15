@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { addPatient, removePatient, useStateValue } from "../state";
 import { Gender, Patient, EntryType, Entry, HealthCheckRating } from "../types/types";
 import { apiBaseUrl } from "../constants";
-import { Button, CardGroup, Confirm, ConfirmProps, Icon, Loader, Table } from "semantic-ui-react";
+import { Button, CardGroup, Confirm, ConfirmProps, DropdownProps, Icon, Loader, Select, Table } from "semantic-ui-react";
 import PatientEntryCard, { EntryAction } from "../components/PatientEntryCard";
 import AddPatientEntry from "../AddPatientEntryModal";
 import { EntryFormValues } from "../AddPatientEntryModal/AddEntryForm";
@@ -32,6 +32,7 @@ const PatientInfo = () => {
     const [confirm, setConfirm] = useState<ConfirmProps>({}); // confirmation modal props
     const history = useHistory();
     const [fetching, setFetching] = React.useState<boolean>(false);
+    const [entriesFilter, setEntriesFilter] = React.useState<string>('');
     
     const entryActions: EntryAction[] = [
         { label: 'edit', iconName: 'edit', callback: (entry) => onEditEntry ? void onEditEntry(entry) : undefined },
@@ -106,15 +107,16 @@ const PatientInfo = () => {
         });
     };
 
-    const renderPatientEntries = () => {
+    const renderPatientEntries = (filter = '') => {
         return (
             <React.Fragment>
                 {patients[patientId].entries && patients[patientId].entries.length > 0
 
                     ? <CardGroup>
-                        {patients[patientId].entries.map(entry =>
-                            <PatientEntryCard key={entry.id} entry={entry} actions={entryActions} onEdit={onEditEntry} onDelete={onDeleteEntry} />
-                        )}
+                        {patients[patientId]
+                            .entries.filter(entry => entry.type.includes(filter))
+                            .map(entry => <PatientEntryCard key={entry.id} entry={entry} actions={entryActions} onEdit={onEditEntry} onDelete={onDeleteEntry} />)
+                        }
                     </CardGroup>
 
                     : <em>no entries</em>
@@ -294,19 +296,41 @@ const PatientInfo = () => {
                 </div>
             </div>
             <div>
-                <div style={{ position: 'relative', width: 'max-content', left: '91%', top: '2.15rem' }}>
-                    <Button
-                        as="a"
-                        onClick={() => openEntryModal()}
-                    >
-                        add entry
-                    </Button>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1em', position: 'relative', top: '2rem' }}>
+                    <div style={{ width: 'max-content'}}>
+                        <Select
+                            clearable
+                            disabled={patients[patientId]?.entries?.length === 0}
+                            placeholder="filter entries by type"
+                            options={
+                                [
+                                    ...Object.values(EntryType).map(et => (
+                                        {
+                                            key: et,
+                                            text: et.split(/([A-Z][a-z]+)/).filter(e => e).join(' '),
+                                            value: et,
+                                        }
+                                    ))
+                                ]
+                            }
+                            onChange={ (_event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => setEntriesFilter(data.value as string)}
+                        />
                     </div>
+                    <div style={{ width: 'max-content'}}>
+                        <Button
+                            as="a"
+                            onClick={() => openEntryModal()}
+                        >
+                            add entry
+                        </Button>
+                    </div>
+                </div>
+                
                 <div>
                     <h3>entries</h3>
                     {fetching
                         ? <Loader active content='Fetching entries' />
-                        : renderPatientEntries()
+                        : renderPatientEntries(entriesFilter)
                     }
                     
                 </div>
