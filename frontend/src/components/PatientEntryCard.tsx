@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
-import { Card, Icon, Table } from 'semantic-ui-react';
+import { Card, Icon, SemanticICONS, Table } from 'semantic-ui-react';
 import { apiBaseUrl } from '../constants';
 import { addDiagnosis, useStateValue } from '../state';
 import { Action } from '../types/Action';
@@ -19,6 +19,12 @@ interface Props {
 export interface EntryAction extends Action {
     callback: (entry: Entry) => void;
 }
+
+export const EntryIcon: { [key: string]: SemanticICONS } = {
+    [EntryType.HospitalEntry]: 'hospital',
+    [EntryType.HealthCheckEntry]: 'doctor',
+    [EntryType.OccupationalHealthcareEntry]: 'stethoscope'
+};
 
 const PatientEntryCard = ({ entry, actions }: Props) => {
     const [{ diagnoses }, dispatch] = useStateValue();
@@ -60,7 +66,7 @@ const PatientEntryCard = ({ entry, actions }: Props) => {
     const HealthCheckEntryInfo = (entry: HealthCheckEntry) => {
         return (
             <>
-                <h2>{entry.date} <Icon name="doctor" title="health check" /></h2>
+                <h2>{entry.date} <Icon name={EntryIcon[entry.type]} title="health check" /></h2>
                 <p><em>{entry.description}</em></p>
                 {/*<p>Examined by {entry.specialist}</p>
                 <HealthRatingBar rating={entry.healthCheckRating} showText={true}/>*/}
@@ -86,7 +92,7 @@ const PatientEntryCard = ({ entry, actions }: Props) => {
             <>
                 <h2>
                     {entry.date}&nbsp;
-                    <Icon name="stethoscope" title="occupational healthcare" />&nbsp;
+                    <Icon name={EntryIcon[entry.type]} title="occupational healthcare" />&nbsp;
                     <span
                         style={{ padding: '4px', border: '1px solid', borderRadius: '4px', cursor: 'default' }}
                         title="employer">
@@ -118,7 +124,7 @@ const PatientEntryCard = ({ entry, actions }: Props) => {
     const HospitalEntryInfo = (entry: HospitalEntry) => {
         return (
             <>
-                <h2>{entry.date} <Icon name="hospital" title="hospital admission"/></h2>
+                <h2>{entry.date} <Icon name={EntryIcon[entry.type]} title="hospital admission"/></h2>
                 <p><em>{entry.description}</em></p>
                 <Table collapsing compact singleLine={false} className="no-border no-padding-left medium-line-height">
                     <Table.Body>
