@@ -7,9 +7,9 @@ import { Diagnosis } from "../types/types";
 export type DiagnosisFormValues = Diagnosis;
 
 interface Props {
-  onSubmit: (values: DiagnosisFormValues) => void;
-  onCancel: () => void;
-  initialValues: Diagnosis | undefined
+  onSubmit: (values: DiagnosisFormValues) => void; // on submit callback
+  onCancel: () => void; // on cancel callback
+  initialValues: Diagnosis | undefined // initial values for form fields
 }
 
 export const AddDiagnosisForm = ({ onSubmit, onCancel, initialValues } : Props ) => {

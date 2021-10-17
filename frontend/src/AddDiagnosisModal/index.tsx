@@ -5,11 +5,11 @@ import AddDiagnosisForm, { DiagnosisFormValues } from './AddDiagnosisForm';
 import SearchICDCodeForm from '../SearchICDCode';
 
 interface Props {
-  modalOpen: boolean;
+  modalOpen: boolean; // whether modal is open
   onClose: () => void;
   onSubmit: (values: DiagnosisFormValues) => void;
-  error?: string;
-  initialValues: Diagnosis | undefined;
+  error?: string; // error message for form
+  initialValues: Diagnosis | undefined; // initial values for form
 }
 
 const AddDiagnosisModal = ({ modalOpen, onClose, onSubmit, error, initialValues }: Props) => {
@@ -37,7 +37,6 @@ const AddDiagnosisModal = ({ modalOpen, onClose, onSubmit, error, initialValues 
   <Modal open={modalOpen} onClose={onClose} centered={false} closeIcon>
     <Modal.Header>{initialValues !== undefined ? 'Edit' : 'Add a'} diagnosis</Modal.Header>
     <Modal.Content>
-      {/*error && <Segment inverted color="red">{`Error: ${error}`}</Segment>*/}
       {tabs()}
     </Modal.Content>
   </Modal>
