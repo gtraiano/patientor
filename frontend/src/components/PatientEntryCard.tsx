@@ -46,8 +46,6 @@ const PatientEntryCard = ({ entry, actions }: Props) => {
         return (
             <React.Fragment>
                 <h4>Diagnosis</h4>
-                {/*<ul>{entry.diagnosisCodes?.map((c,index) => <li key={index}>{Object.values(c).slice(0,2).join(' ')}</li>)}</ul>*/}
-                {/*<ul>{entry.diagnosisCodes?.map((code, index) => <li key={index}>{code} {diagnoses[code].name}</li>)}</ul>*/}
                 <Table collapsing compact singleLine={false} className="no-border no-padding-left medium-line-height">
                     <Table.Body>
                         {entry.diagnosisCodes?.map((code, index) =>
@@ -68,8 +66,6 @@ const PatientEntryCard = ({ entry, actions }: Props) => {
             <>
                 <h2>{entry.date} <Icon name={EntryIcon[entry.type]} title="health check" /></h2>
                 <p><em>{entry.description}</em></p>
-                {/*<p>Examined by {entry.specialist}</p>
-                <HealthRatingBar rating={entry.healthCheckRating} showText={true}/>*/}
                 <Table collapsing compact singleLine={false} className="no-border no-padding-left medium-line-height">
                     <Table.Body>
                         <Table.Row>
@@ -100,8 +96,6 @@ const PatientEntryCard = ({ entry, actions }: Props) => {
                     </span>
                 </h2>
                 <p><em>{entry.description}</em></p>
-                {/*<p>Examined by {entry.specialist}</p>
-                {entry.sickLeave && <p>Sick leave {entry.sickLeave?.startDate} &mdash; {entry.sickLeave?.endDate}</p>}*/}
                 <Table collapsing compact singleLine={false} className="no-border no-padding-left medium-line-height">
                     <Table.Body>
                         <Table.Row>
@@ -142,8 +136,6 @@ const PatientEntryCard = ({ entry, actions }: Props) => {
                         </Table.Row>
                     </Table.Body>
                 </Table>
-                {/*<p>Examined by {entry.specialist}</p>
-                <p>Discharged on {entry.discharge.date} because &ldquo;<em>{entry.discharge.criteria}</em>&rdquo;</p>*/}
                 {renderDiagnosesInfo()}
             </>
         );
