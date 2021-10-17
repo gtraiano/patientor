@@ -25,7 +25,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
 const types_1 = require("../types");
-const Entry_1 = require("./Entry");
+const BaseEntry_1 = require("./Entry/BaseEntry");
 ;
 const PatientSchema = new mongoose_1.Schema({
     name: {
@@ -54,7 +54,7 @@ const PatientSchema = new mongoose_1.Schema({
         required: true
     },
     entries: {
-        type: [Entry_1.EntrySchema],
+        type: [BaseEntry_1.BaseEntrySchema],
         required: true,
         default: []
     }

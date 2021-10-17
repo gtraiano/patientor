@@ -48,5 +48,12 @@ exports.BaseEntrySchema = new mongoose_1.Schema({
         },
         required: true
     },
+}, { discriminatorKey: 'type' });
+exports.BaseEntrySchema.set('toJSON', {
+    transform: (_document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString();
+        delete returnedObject._id;
+        delete returnedObject.__v;
+    }
 });
 exports.default = mongoose_1.default.model('BaseEntry', exports.BaseEntrySchema);

@@ -25,11 +25,11 @@ const addDiagnosis = (diagnosis) => __awaiter(void 0, void 0, void 0, function* 
     //return newDiagnosis;
 });
 const editDiagnosis = (diagnosis) => __awaiter(void 0, void 0, void 0, function* () {
-    const edited = yield Diagnosis_1.default.findOneAndUpdate({ code: diagnosis.code }, diagnosis);
+    const edited = yield Diagnosis_1.default.findOneAndUpdate({ code: diagnosis.code }, diagnosis, { new: true });
     if (!edited) {
         throw new Error(`Diagnosis code ${diagnosis.code} does not exist`);
     }
-    return edited /*.toJSON()*/;
+    return edited.toJSON();
 });
 const removeDiagnosis = (code) => __awaiter(void 0, void 0, void 0, function* () {
     const deleted = yield Diagnosis_1.default.findOneAndDelete({ code: code });

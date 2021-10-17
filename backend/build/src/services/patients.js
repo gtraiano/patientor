@@ -12,8 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const types_1 = require("../types");
 const validation_1 = __importDefault(require("../utils/validation"));
 const Patient_1 = __importDefault(require("../models/Patient"));
+const Entry_1 = require("../models/Entry");
 const getPatients = () => __awaiter(void 0, void 0, void 0, function* () {
     return (yield Patient_1.default.find({})).map(p => p.toPublicPatient());
 });
@@ -22,12 +24,12 @@ const findById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return (_a = (yield Patient_1.default.findById(id))) === null || _a === void 0 ? void 0 : _a.toJSON();
 });
 const addPatient = (patient) => __awaiter(void 0, void 0, void 0, function* () {
-    const created = yield Patient_1.default.create(patient);
+    const newPatient = new Patient_1.default(patient);
+    const created = yield newPatient.save();
     return created.toJSON();
 });
 const removePatient = (id) => __awaiter(void 0, void 0, void 0, function* () {
     yield Patient_1.default.findByIdAndRemove(id);
-    //return (await PatientModel.find({})).map(p => p.toJSON());
 });
 const editPatient = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
     const validated = validation_1.default.parseEditPatient(data);
@@ -47,8 +49,20 @@ const addEntry = (patientdId, entry) => __awaiter(void 0, void 0, void 0, functi
     if (!patient) {
         throw new Error('Patient id does not exist');
     }
-    patient.entries.push(newEntry);
-    yield patient.save();
+    switch (newEntry.type) {
+        case types_1.EntryType.HealthCheck:
+            patient.entries.push(new Entry_1.HealthCheckEntry(newEntry));
+            break;
+        case types_1.EntryType.Hospital:
+            patient.entries.push(new Entry_1.HospitalEntry(newEntry));
+            break;
+        case types_1.EntryType.OccupationalHealthcare:
+            patient.entries.push(new Entry_1.OccupationalHealthcareEntry(newEntry));
+            break;
+        default:
+            throw Error(`Entry type must be [${Object.values(types_1.EntryType).join(', ')}]`);
+    }
+    yield patient.save({ validateBeforeSave: false });
     return patient;
 });
 const editEntry = (patientId, entryId, entry, method) => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,10 +79,11 @@ const editEntry = (patientId, entryId, entry, method) => __awaiter(void 0, void 
     }
     patient.entries[toEdit] = Object.assign(Object.assign(Object.assign({}, patient.toObject().entries[toEdit]), Object.fromEntries(Object.entries(method === 'PUT'
         ? validation_1.default.parseEntry(entry)
-        : entry)
-        .filter(([key,]) => key !== 'id') // remove id property to prevent changing via request
+        : entry // partial object
+    )
+        .filter(([key,]) => !['key', 'type'].includes(key)) // remove id and type property to prevent changing via request
     )), { id: patient.toObject().entries[toEdit].id });
-    yield patient.save();
+    yield patient.save({ validateBeforeSave: false });
     return patient.toJSON();
 });
 const removeEntry = (patientdId, entryId) => __awaiter(void 0, void 0, void 0, function* () {
