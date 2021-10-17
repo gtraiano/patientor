@@ -15,11 +15,11 @@ const addDiagnosis = async (diagnosis: unknown): Promise<Diagnosis> => {
 };
 
 const editDiagnosis = async (diagnosis: Diagnosis): Promise<Diagnosis> => {
-    const edited = await DiagnosisModel.findOneAndUpdate({ code: diagnosis.code }, diagnosis);
+    const edited = await DiagnosisModel.findOneAndUpdate({ code: diagnosis.code }, diagnosis, { new: true });
     if(!edited) {
         throw new Error(`Diagnosis code ${diagnosis.code} does not exist`);
     }
-    return edited/*.toJSON()*/;
+    return edited.toJSON();
 }
 
 const removeDiagnosis = async (code: string): Promise<Diagnosis> => {
