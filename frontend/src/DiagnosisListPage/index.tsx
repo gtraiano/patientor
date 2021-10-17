@@ -77,20 +77,6 @@ const DiagnosisListPage = () => {
     }
   };
 
-  /*const updateDiagnosis = async (values: DiagnosisFormValues) => {
-    try {
-      const { data: newDiagnosis } = await axios.put<Diagnosis>(
-        `${apiBaseUrl}/diagnoses/${values.code}`,
-        values
-      );
-      dispatch(addDiagnosis(newDiagnosis));
-      closeModal();
-    } catch (e) {
-      console.error(e.response?.data || 'Unknown Error');
-      setError(e.response?.data?.error || 'Unknown error');
-    }
-  };*/
-
   const deleteDiagnosis = async (code: string) => {
     try {
       //if(window.confirm(`Delete diagnosis ${code} ${diagnoses[code].name}?`)) {
