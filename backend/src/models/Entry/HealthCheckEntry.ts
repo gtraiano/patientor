@@ -1,13 +1,12 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { HealthCheckEntry, HealthCheckRating } from '../../types';
-import { BaseEntrySchema } from './BaseEntry';
+import { Schema, Document } from 'mongoose';
+import { EntryType, HealthCheckEntry, HealthCheckRating } from '../../types';
+import BaseEntryModel from './BaseEntry';
 
 export interface HealthCheckEntryDoc extends HealthCheckEntry, Document {
     id: string
 };
 
 export const HealthCheckEntrySchema = new Schema<HealthCheckEntryDoc>({
-    ...BaseEntrySchema.obj,
     healthCheckRating: {
         type: Number,
         required: true,
@@ -18,4 +17,4 @@ export const HealthCheckEntrySchema = new Schema<HealthCheckEntryDoc>({
     }
 });
 
-export default mongoose.model<HealthCheckEntryDoc>('HealthCheckEntry', HealthCheckEntrySchema);
+export default BaseEntryModel.discriminator<HealthCheckEntryDoc>(EntryType.HealthCheck, HealthCheckEntrySchema);

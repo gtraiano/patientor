@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Patient, Gender, PublicPatient } from '../types';
-import { EntrySchema } from './Entry';
+import { BaseEntrySchema } from './Entry/BaseEntry';
 
 export interface PatientDoc extends Patient, Document {
     id: string,
@@ -35,7 +35,7 @@ const PatientSchema = new Schema<PatientDoc>({
         required: true
     },
     entries: {
-        type: [EntrySchema],
+        type: [BaseEntrySchema],
         required: true,
         default: []
     }
@@ -49,7 +49,7 @@ PatientSchema.set('toJSON', {
     }
 });
 
-PatientSchema.method('toPublicPatient', function (): PublicPatient {
+PatientSchema.method('toPublicPatient', function (this: PatientDoc): PublicPatient {
     return {
         id: this._id.toString(),
         name: this.name,

@@ -1,13 +1,12 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { HospitalEntry } from '../../types';
-import { BaseEntrySchema } from './BaseEntry';
+import { Schema, Document } from 'mongoose';
+import { EntryType, HospitalEntry } from '../../types';
+import BaseEntryModel from './BaseEntry';
 
 export interface HospitalEntryDoc extends HospitalEntry, Document {
     id: string
 };
 
 export const HospitalEntrySchema: Schema = new Schema<HospitalEntryDoc>({
-    ...BaseEntrySchema.obj,
     discharge: {
         date: {
             type: String,
@@ -20,4 +19,4 @@ export const HospitalEntrySchema: Schema = new Schema<HospitalEntryDoc>({
     }
 });
 
-export default mongoose.model<HospitalEntryDoc>('HospitalEntry', HospitalEntrySchema);
+export default BaseEntryModel.discriminator<HospitalEntryDoc>(EntryType.Hospital, HospitalEntrySchema);

@@ -1,13 +1,12 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { OccupationalHealthcareEntry } from '../../types';
-import { BaseEntrySchema } from './BaseEntry';
+import { Schema, Document } from 'mongoose';
+import { EntryType, OccupationalHealthcareEntry } from '../../types';
+import BaseEntryModel from './BaseEntry';
 
 export interface OccupationalHealthcareEntryDoc extends OccupationalHealthcareEntry, Document {
     id: string
 };
 
 export const OccupationalHealthcareEntrySchema = new Schema<OccupationalHealthcareEntryDoc>({
-    ...BaseEntrySchema.obj,
     employerName: {
         type: String,
         required: true
@@ -24,4 +23,4 @@ export const OccupationalHealthcareEntrySchema = new Schema<OccupationalHealthca
     }
 });
 
-export default mongoose.model<OccupationalHealthcareEntryDoc>('OccupationalHealthcareEntry', OccupationalHealthcareEntrySchema);
+export default BaseEntryModel.discriminator<OccupationalHealthcareEntryDoc>(EntryType.OccupationalHealthcare, OccupationalHealthcareEntrySchema);

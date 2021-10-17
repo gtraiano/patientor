@@ -1,6 +1,7 @@
-import { Patient, PublicPatient, NewPatient, Entry, NewEntry } from '../types';
+import { Patient, PublicPatient, NewPatient, Entry, NewEntry, EntryType } from '../types';
 import Validation from '../utils/validation';
 import PatientModel from '../models/Patient';
+import { HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry } from '../models/Entry';
 
 const getPatients = async (): Promise<Array<PublicPatient>> => {
     return (await PatientModel.find({})).map(p => p.toPublicPatient());
@@ -11,13 +12,13 @@ const findById = async (id: string): Promise<Patient | undefined | null> => {
 }
 
 const addPatient = async (patient: NewPatient): Promise<Patient> => {
-    const created = await PatientModel.create(patient);
+    const newPatient = new PatientModel(patient);
+    const created = await newPatient.save();
     return created.toJSON();
 }
 
 const removePatient = async (id: string): Promise<void> => {
     await PatientModel.findByIdAndRemove(id);
-    //return (await PatientModel.find({})).map(p => p.toJSON());
 }
 
 const editPatient = async (id: string, data: any): Promise<Patient> => {
@@ -39,8 +40,22 @@ const addEntry = async (patientdId: string, entry: NewEntry): Promise<Patient | 
     if(!patient) {
         throw new Error('Patient id does not exist');
     }
-    patient.entries.push(newEntry);
-    await patient.save();
+
+    switch(newEntry.type) {
+        case EntryType.HealthCheck:
+            patient.entries.push(new HealthCheckEntry(newEntry));
+            break;
+        case EntryType.Hospital:
+            patient.entries.push(new HospitalEntry(newEntry));
+            break;
+        case EntryType.OccupationalHealthcare:
+            patient.entries.push(new OccupationalHealthcareEntry(newEntry));
+            break;
+        default:
+            throw Error(`Entry type must be [${Object.values(EntryType).join(', ')}]`);
+    }
+
+    await patient.save({ validateBeforeSave: false });
     return patient;
 }
 
@@ -65,14 +80,14 @@ const editEntry = async (patientId: string, entryId: string, entry: Entry, metho
             Object.entries(
                 method === 'PUT'
                     ? Validation.parseEntry(entry)
-                    : entry
+                    : entry // partial object
             )
-            .filter(([key,]) => key !== 'id') // remove id property to prevent changing via request
+            .filter(([key,]) => !['key', 'type'].includes(key)) // remove id and type property to prevent changing via request
         ),
         id: patient.toObject().entries[toEdit].id
     };
 
-    await patient.save();
+    await patient.save({ validateBeforeSave: false });
     return patient.toJSON();
 }
 
