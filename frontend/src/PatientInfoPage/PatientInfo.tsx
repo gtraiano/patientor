@@ -114,7 +114,7 @@ const PatientInfo = () => {
 
                     ? <CardGroup>
                         {patients[patientId]
-                            .entries.filter(entry => entry.type.includes(filter))
+                            .entries.filter(entry => entry?.type?.includes(filter))
                             .map(entry => <PatientEntryCard key={entry.id} entry={entry} actions={entryActions} onEdit={onEditEntry} onDelete={onDeleteEntry} />)
                         }
                     </CardGroup>
@@ -296,7 +296,7 @@ const PatientInfo = () => {
                 </div>
             </div>
             <div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1em', position: 'relative', top: '2rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1%', position: 'relative', top: '2rem' }}>
                     <div style={{ width: 'max-content'}}>
                         <Select
                             clearable
