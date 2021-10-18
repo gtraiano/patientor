@@ -33,11 +33,11 @@ const removePatient = (id) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const editPatient = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
     const validated = validation_1.default.parseEditPatient(data);
-    const ssnExists = yield Patient_1.default.findOne({ ssn: data.ssn });
-    if (ssnExists && ssnExists._id.toString() !== id) { // ssn exists and belongs to another patient
+    /*const ssnExists = await PatientModel.findOne({ ssn: data.ssn });
+    if(ssnExists && ssnExists._id.toString() !== id) { // ssn exists and belongs to another patient
         throw new Error('Validation failed: ssn already exists');
-    }
-    const patient = yield Patient_1.default.findOneAndUpdate({ _id: id }, validated, { new: true });
+    }*/
+    const patient = yield Patient_1.default.findOneAndUpdate({ _id: id }, validated, { new: true, runValidators: true });
     if (!patient) {
         throw new Error(`Patient id ${id} does not exist`);
     }
