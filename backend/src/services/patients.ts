@@ -23,11 +23,11 @@ const removePatient = async (id: string): Promise<void> => {
 
 const editPatient = async (id: string, data: any): Promise<Patient> => {
     const validated = Validation.parseEditPatient(data);
-    const ssnExists = await PatientModel.findOne({ ssn: data.ssn });
+    /*const ssnExists = await PatientModel.findOne({ ssn: data.ssn });
     if(ssnExists && ssnExists._id.toString() !== id) { // ssn exists and belongs to another patient
         throw new Error('Validation failed: ssn already exists');
-    }
-    const patient = await PatientModel.findOneAndUpdate({ _id: id }, validated, { new: true });
+    }*/
+    const patient = await PatientModel.findOneAndUpdate({ _id: id }, validated, { new: true, runValidators: true });
     if(!patient) {
         throw new Error(`Patient id ${id} does not exist`);
     }
