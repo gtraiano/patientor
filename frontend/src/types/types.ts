@@ -74,3 +74,40 @@ export type Patient = {
   occupation: string,
   entries: Entry[]
 };
+
+export interface AcessToken {
+  token: string,
+  exp: number,
+  iat: number,
+  id: string,
+  username: string,
+  name?: string,
+  roles: [string]
+}
+
+export interface User {
+  id: string,
+  name?: string,
+  username: string,
+  password: string,
+  createdAt: number,
+  roles: [string]
+}
+
+export type Auth = AcessToken | null;
+
+export enum MessageVariation {
+  error = 'error',
+  info = 'info',
+  warning = 'warning',
+  success = 'success'
+}
+
+export interface Message {
+  text: {
+    header?: string,
+    content?: string
+  },
+    type: MessageVariation,
+    show: boolean
+}

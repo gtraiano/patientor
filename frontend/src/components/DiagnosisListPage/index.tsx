@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../controllers/axios";
 import { Container, Table, Button, Icon, Confirm, ConfirmProps } from "semantic-ui-react";
 
 import { DiagnosisFormValues } from "../AddDiagnosisModal/AddDiagnosisForm";
 import AddDiagnosisModal from "../AddDiagnosisModal";
-import { Diagnosis } from "../types/types";
-import { Action } from '../types/Action';
-import { apiBaseUrl } from "../constants";
-import { useStateValue, setDiagnosisList, addDiagnosis, removeDiagnosis } from "../state";
+import { Diagnosis } from "../../types/types";
+import { Action } from '../../types/Action';
+import { apiBaseUrl } from "../../constants";
+import { useStateValue } from '../../state';
+import { addDiagnosis, removeDiagnosis, setDiagnosisList } from "../../state/actions/diagnoses";
 
 interface DiagnosisAction extends Action {
   callback: (code: string) => void;

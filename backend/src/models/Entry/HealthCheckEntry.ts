@@ -1,6 +1,6 @@
 import { Schema, Document } from 'mongoose';
 import { EntryType, HealthCheckEntry, HealthCheckRating } from '../../types';
-import BaseEntryModel from './BaseEntry';
+import BaseEntryModel, { options } from './BaseEntry';
 
 export interface HealthCheckEntryDoc extends HealthCheckEntry, Document {
     id: string
@@ -15,6 +15,8 @@ export const HealthCheckEntrySchema = new Schema<HealthCheckEntryDoc>({
             message: '{VALUE} is not supported'
         }
     }
-});
+},
+options
+);
 
 export default BaseEntryModel.discriminator<HealthCheckEntryDoc>(EntryType.HealthCheck, HealthCheckEntrySchema);

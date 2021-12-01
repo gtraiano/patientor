@@ -1,8 +1,8 @@
 import React from "react";
 import { Grid, Button } from "semantic-ui-react";
 import { Field, Formik, Form } from "formik";
-import { TextField } from '../components/FormFields';
-import { Diagnosis } from "../types/types";
+import { TextField } from '../FormFields';
+import { Diagnosis } from "../../types/types";
 
 export type DiagnosisFormValues = Diagnosis;
 

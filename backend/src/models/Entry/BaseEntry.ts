@@ -5,6 +5,8 @@ export interface BaseEntryDoc extends BaseEntry, Document {
     id: string
 };
 
+export const options = { discriminatorKey: 'type' };
+
 export const BaseEntrySchema: Schema = new Schema<BaseEntryDoc>(
     {
         description: {
@@ -32,7 +34,7 @@ export const BaseEntrySchema: Schema = new Schema<BaseEntryDoc>(
             required: true
         },
     },
-    { discriminatorKey: 'type' }
+    options
 );
 
 BaseEntrySchema.set('toJSON', {
@@ -43,4 +45,4 @@ BaseEntrySchema.set('toJSON', {
     }
 });
 
-export default mongoose.model<BaseEntryDoc>('BaseEntry', BaseEntrySchema);
+export default mongoose.model<BaseEntryDoc>('Entry', BaseEntrySchema, 'Entries');

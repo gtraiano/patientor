@@ -90,3 +90,37 @@ export enum Gender {
     Female = 'female',
     Other = 'other'
 }
+
+export enum Roles {
+    User = 'user',
+    Admin = 'admin',
+    Moderator = 'moderator'
+}
+
+export interface Role {
+    name: Roles
+}
+
+export interface User {
+    id: string,
+    name?: string,
+    username: string,
+    password: string,
+    createdAt: number,
+    roles: [Role]
+}
+
+export type NewUser = Omit<User, 'id' | 'createdAt'>
+
+export interface AccessToken {
+    token: string,
+    /*username: string,
+    name?: string,
+    roles?: string[]*/
+}
+
+export interface RefreshToken {
+    token: string,
+    userId: string,
+    expires: Date
+}

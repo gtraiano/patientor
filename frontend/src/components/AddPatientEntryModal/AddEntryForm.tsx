@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
-import { addDiagnosis, useStateValue } from '../state';
-import { TextField, NumberField, DateField, SelectEntryType, SelectDiagnosis } from '../components/FormFields';
-import { Diagnosis, EntryType, Discharge, HealthCheckRating, SickLeave } from '../types/types';
+import { useStateValue } from '../../state';
+import { TextField, NumberField, DateField, SelectEntryType, SelectDiagnosis } from '../FormFields';
+import { Diagnosis, EntryType, Discharge, HealthCheckRating, SickLeave } from '../../types/types';
 import { Button, DropdownOnSearchChangeData } from 'semantic-ui-react';
 import AddDiagnosisModal from '../AddDiagnosisModal';
-import axios from 'axios';
-import { apiBaseUrl } from '../constants';
+import axios from '../../controllers/axios';
+import { apiBaseUrl } from '../../constants';
+import { addDiagnosis } from '../../state/actions/diagnoses';
 
 export type EntryFormValues = {
     id?: string;

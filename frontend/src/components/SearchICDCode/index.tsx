@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { apiBaseUrl } from '../constants';
+import axios from '../../controllers/axios';
+import { apiBaseUrl } from '../../constants';
 import { Form, Segment, Label, SearchResults } from 'semantic-ui-react';
-import { useStateValue, addDiagnosis } from '../state';
-import { Diagnosis } from '../types/types';
+import { useStateValue } from '../../state';
+import { Diagnosis } from '../../types/types';
 import SearchResultsList from './SearchResultsList';
+import { addDiagnosis } from '../../state/actions/diagnoses';
 
 export interface SearchResults {
     terms: string | undefined,

@@ -1,13 +1,14 @@
-import axios from 'axios';
+import axios from '../controllers/axios';
 import React, { useEffect } from 'react';
 import { Card, Icon, SemanticICONS, Table } from 'semantic-ui-react';
 import { apiBaseUrl } from '../constants';
-import { addDiagnosis, useStateValue } from '../state';
+import { useStateValue } from '../state';
 import { Action } from '../types/Action';
 import { Diagnosis, Entry, EntryType, HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry } from '../types/types';
 import HealthRatingBar from './HealthRatingBar';
 
 import '../styles/general.css';
+import { addDiagnosis } from '../state/actions/diagnoses';
 
 interface Props {
     entry: Entry,

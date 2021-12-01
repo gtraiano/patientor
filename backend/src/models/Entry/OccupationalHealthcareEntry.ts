@@ -1,6 +1,6 @@
 import { Schema, Document } from 'mongoose';
 import { EntryType, OccupationalHealthcareEntry } from '../../types';
-import BaseEntryModel from './BaseEntry';
+import BaseEntryModel, { options } from './BaseEntry';
 
 export interface OccupationalHealthcareEntryDoc extends OccupationalHealthcareEntry, Document {
     id: string
@@ -21,6 +21,7 @@ export const OccupationalHealthcareEntrySchema = new Schema<OccupationalHealthca
             required: false
         }
     }
-});
+},
+options);
 
 export default BaseEntryModel.discriminator<OccupationalHealthcareEntryDoc>(EntryType.OccupationalHealthcare, OccupationalHealthcareEntrySchema);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Segment, Tab } from 'semantic-ui-react';
-import { Diagnosis } from '../types/types';
+import { Diagnosis } from '../../types/types';
 import AddDiagnosisForm, { DiagnosisFormValues } from './AddDiagnosisForm';
 import SearchICDCodeForm from '../SearchICDCode';
 

@@ -1,13 +1,13 @@
 import React from "react";
-import axios from "axios";
+import axios from "../../controllers/axios";
 import { Container, Table, Button, Icon, Input } from "semantic-ui-react";
 
 import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
 import AddPatientModal from "../AddPatientModal";
-import { Patient } from "../types/types";
-import { apiBaseUrl } from "../constants";
-import HealthRatingBar from "../components/HealthRatingBar";
-import { useStateValue } from "../state";
+import { Patient } from "../../types/types";
+import { apiBaseUrl } from "../../constants";
+import HealthRatingBar from "../../components/HealthRatingBar";
+import { useStateValue } from "../../state";
 import { Link } from "react-router-dom";
 
 const PatientListPage = () => {

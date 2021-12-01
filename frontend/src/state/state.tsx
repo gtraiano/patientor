@@ -1,16 +1,25 @@
 import React, { createContext, useContext, useReducer } from "react";
-import { Diagnosis, Patient } from "../types/types";
+import { Action } from "./actions";
+import { AuthState } from "./reducers/auth";
+import { DiagnosesState } from "./reducers/diagnoses";
+import { MessageState } from "./reducers/message";
+import { PatientsState } from "./reducers/patients";
+import { SchedulerState } from "./reducers/scheduler";
 
-import { Action } from "./reducer";
-
-export type State = {
-  patients: { [id: string]: Patient };
-  diagnoses: { [code: string]: Diagnosis };
-};
+export interface State {
+  patients: PatientsState;
+  diagnoses: DiagnosesState;
+  auth: AuthState,
+  scheduler: SchedulerState,
+  message: MessageState
+}
 
 const initialState: State = {
   patients: {},
-  diagnoses: {}
+  diagnoses: {},
+  auth: null,
+  scheduler: [] as NodeJS.Timeout[],
+  message: null
 };
 
 export const StateContext = createContext<[State, React.Dispatch<Action>]>([

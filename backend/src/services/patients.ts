@@ -97,7 +97,7 @@ const removeEntry = async (patientdId:string, entryId: string): Promise<Patient>
         throw new Error('Patient id does not exist');
     }
     patient.entries = patient?.entries.filter(entry => entry.id !== entryId);
-    await patient.save();
+    await patient.save({ validateBeforeSave: false });
     return patient.toJSON();
 }
 

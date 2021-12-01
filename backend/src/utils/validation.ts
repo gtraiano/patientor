@@ -1,4 +1,4 @@
-import { Gender, NewEntry, EntryType, HealthCheckEntry, HealthCheckRating, HospitalEntry, OccupationalHealthcareEntry, Diagnosis, PatientFormValues } from "../types";
+import { Gender, NewEntry, EntryType, HealthCheckEntry, HealthCheckRating, HospitalEntry, OccupationalHealthcareEntry, Diagnosis, PatientFormValues, NewUser, Roles, Role } from "../types";
 
 const isString = (str: unknown): boolean => {
     return typeof str === 'string' || str instanceof String;
@@ -167,6 +167,24 @@ const parseEditPatient = (entry: any): PatientFormValues => {
     return entry;
 }
 
+const parseUser = (user: any): NewUser => {
+    if(!user.username) throw new Error('Username is not defined');
+    if(!user.password.trim()?.length) throw new Error('Password is not defined');
+    if(user.roles /*&& user.roles instanceof Array*/) {
+        if(!(user.roles instanceof Array)) throw new Error('User roles must be an array');
+        if(!user.roles.length) {
+            throw new Error('Must define at least 1 role');
+        }
+        user.roles.forEach((role: Role) => {
+            const roles = Object.values(Roles);
+            if(!roles.includes(role.name)) {
+                throw new Error(`${role.name} is not a valid user role`);
+            }
+        })
+    }
+    return user;
+}
+
 const Validation = {
     isString,
     isDate,
@@ -182,7 +200,8 @@ const Validation = {
     patterns: {
         datePattern,
         ssnPattern
-    }
+    },
+    parseUser
 };
 
 export default Validation;

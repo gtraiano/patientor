@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../controllers/axios";
 import { useParams } from "react-router";
-import { addPatient, removePatient, useStateValue } from "../state";
-import { Gender, Patient, EntryType, Entry, HealthCheckRating } from "../types/types";
-import { apiBaseUrl } from "../constants";
+import { useStateValue } from "../../state";
+import { Gender, Patient, EntryType, Entry, HealthCheckRating } from "../../types/types";
+import { apiBaseUrl } from "../../constants";
 import { Button, CardGroup, Confirm, ConfirmProps, DropdownProps, Icon, Loader, Select, Table } from "semantic-ui-react";
-import PatientEntryCard, { EntryAction } from "../components/PatientEntryCard";
+import PatientEntryCard, { EntryAction } from "../PatientEntryCard";
 import AddPatientEntry from "../AddPatientEntryModal";
 import { EntryFormValues } from "../AddPatientEntryModal/AddEntryForm";
-import { Action } from "../types/Action";
+import { Action } from "../../types/Action";
 import AddPatientModal from "../AddPatientModal";
 import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
 import { useHistory } from "react-router-dom";
 
-import '../styles/general.css';
+import '../../styles/general.css';
+import { addPatient, removePatient } from "../../state/actions/patients";
 
 interface PatientAction extends Action {
     callback: (patient: Patient) => void
@@ -237,7 +238,8 @@ const PatientInfo = () => {
             setFetching(false);
         }
         //setConfirm({ ...confirm, onCancel: closeConfirm });
-    }, []);
+    }, [patients[patientId]]);
+
 
     if(patients[patientId] === null) {
         return null;
