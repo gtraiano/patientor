@@ -37,6 +37,9 @@ app.use('/api/patients', patientsRouter);
 app.use('/api/icdclookup', ICDCLookupRouter);
 app.use('/api/users', usersRouter);
 
+app.use(errorMiddleware.db.dbErrorHandler);
+app.use(errorMiddleware.general.generalErrorHandler);
+
 async function connectToDB(): Promise<void> {
     // Connect to MongoDB
     if(!config.db.MONGODB_URI) {

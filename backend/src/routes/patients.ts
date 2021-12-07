@@ -9,8 +9,13 @@ patientsRouter.get('/', async (_req, res) => {
 });
 
 patientsRouter.get('/:id', async (req, res) => {
-    const found = await patientsService.findById(req.params.id);
-    found ? res.json(found) : res.status(404).end();
+    try {
+        const found = await patientsService.findById(req.params.id);
+        found ? res.json(found) : res.status(404).end();
+    }
+    catch(error: any) {
+        res.status(404).json({ error: error.name === 'CastError' ? 'patient id does not exist' : error.message });
+    }
 });
 
 patientsRouter.put('/:id', async (req, res) => {

@@ -46,7 +46,7 @@ authRouter.delete('/', async (request, response) => {
     }
 });
 
-authRouter.put('/', async (request, response, next ) => {
+authRouter.put('/', async (request, response, next) => {
 // user asks for access token refresh
     try {
         const refreshToken = request.cookies[config.refreshToken.cookie.name];
