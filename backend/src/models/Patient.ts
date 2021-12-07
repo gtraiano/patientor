@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
-import { Patient, Gender, PublicPatient } from '../types';
+import { Patient, Gender, PublicPatient, EntryType, Entry, HealthCheckRating } from '../types';
 import { BaseEntrySchema } from './Entry/BaseEntry';
 
 export interface PatientDoc extends Patient, Document {
@@ -41,7 +41,18 @@ const PatientSchema = new Schema<PatientDoc>({
     }
 });
 
+const healthRating = (entries: Entry[]): HealthCheckRating => {
+    const healthCheck = entries.filter((e: Entry) => e.type === EntryType.HealthCheck).map((e: any) => e._doc.healthCheckRating);
+    if(!healthCheck || !healthCheck.length) return HealthCheckRating.Undetermined;
+    return Math.round(healthCheck.reduce((acc: number, cur: number) => acc + cur, 0) / healthCheck.length) as HealthCheckRating;
+};
+
+PatientSchema.virtual('healthRating').get(function(this: PatientDoc): number {
+    return healthRating(this.entries);
+});
+
 PatientSchema.set('toJSON', {
+    virtuals: true,
     transform: (_document, returnedObject) => {
       returnedObject.id = returnedObject._id.toString();
       delete returnedObject._id;
@@ -49,13 +60,16 @@ PatientSchema.set('toJSON', {
     }
 });
 
+PatientSchema.set('toObject', { virtuals: true });
+
 PatientSchema.method('toPublicPatient', function (this: PatientDoc): PublicPatient {
     return {
         id: this._id.toString(),
         name: this.name,
         dateOfBirth: this.dateOfBirth,
         gender: this.gender,
-        occupation: this.occupation
+        occupation: this.occupation,
+        healthRating: healthRating(this.entries)
     };
 });
 
