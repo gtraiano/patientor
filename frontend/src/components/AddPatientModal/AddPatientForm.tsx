@@ -9,7 +9,7 @@ import { Gender, Patient } from "../../types/types";
  * use type Patient, but omit id and entries,
  * because those are irrelevant for new patient object.
  */
-export type PatientFormValues = Omit<Patient, "id" | "entries">;
+export type PatientFormValues = Omit<Patient, "id" | "entries" | "healthRating">;
 
 interface Props {
   onSubmit: (values: PatientFormValues) => void;

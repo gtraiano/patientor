@@ -39,7 +39,8 @@ export enum HealthCheckRating {
   "Healthy" = 0,
   "LowRisk" = 1,
   "HighRisk" = 2,
-  "CriticalRisk" = 3
+  "CriticalRisk" = 3,
+  "Undetermined" = -1
 }
 
 export interface HealthCheckEntry extends BaseEntry {
@@ -72,7 +73,8 @@ export type Patient = {
   dateOfBirth: string,
   gender: Gender,
   occupation: string,
-  entries: Entry[]
+  entries: Entry[],
+  healthRating: HealthCheckRating
 };
 
 export interface AcessToken {

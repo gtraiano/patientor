@@ -4,11 +4,12 @@ import { Container, Table, Button, Icon, Input } from "semantic-ui-react";
 
 import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
 import AddPatientModal from "../AddPatientModal";
-import { Patient } from "../../types/types";
+import { HealthCheckRating, Patient } from "../../types/types";
 import { apiBaseUrl } from "../../constants";
 import HealthRatingBar from "../../components/HealthRatingBar";
 import { useStateValue } from "../../state";
 import { Link } from "react-router-dom";
+import { addPatient } from "../../state/actions/patients";
 
 const PatientListPage = () => {
   const [{ patients }, dispatch] = useStateValue();
@@ -30,7 +31,7 @@ const PatientListPage = () => {
         `${apiBaseUrl}/patients`,
         values
       );
-      dispatch({ type: "ADD_PATIENT", payload: newPatient });
+      dispatch(addPatient(newPatient));
       closeModal();
     } catch (e: any) {
       console.error(e.response?.data || 'Unknown Error');
@@ -86,8 +87,8 @@ const PatientListPage = () => {
               <Table.Cell><Link to={`/patients/${patient.id}`}>{patient.name}</Link></Table.Cell>
               <Table.Cell>{patient.gender}</Table.Cell>
               <Table.Cell>{patient.occupation}</Table.Cell>
-              <Table.Cell>
-                <HealthRatingBar showText={false} rating={1} />
+              <Table.Cell title={HealthCheckRating[patient.healthRating].replace(/([a-z])([A-Z])/g, '$1 $2')}>
+                <HealthRatingBar showText={false} rating={patient.healthRating}/>
               </Table.Cell>
             </Table.Row>
           ))}

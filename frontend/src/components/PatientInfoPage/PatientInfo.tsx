@@ -15,6 +15,8 @@ import { useHistory } from "react-router-dom";
 
 import '../../styles/general.css';
 import { addPatient, removePatient } from "../../state/actions/patients";
+import { fetchPatient } from "../../controllers";
+import HealthRatingBar from "../HealthRatingBar";
 
 interface PatientAction extends Action {
     callback: (patient: Patient) => void
@@ -220,22 +222,18 @@ const PatientInfo = () => {
     };
 
     useEffect(() => {
-        const fetchPatientInfo = async (): Promise<Patient | undefined> => {
-            try {
-                const { data } = await axios.get<Patient>(`${apiBaseUrl}/patients/${patientId}`);
-                return data;
-            }
-            catch(error) {
-                console.error(`Patient id ${patientId} does not exist`);
-            }
-        };
-
         if(!patients[patientId] || !patients[patientId].entries) {
             setFetching(true);
-            void fetchPatientInfo().then(data => {
-                dispatch(addPatient(data as Patient));
-            });
-            setFetching(false);
+            void fetchPatient(patientId)
+                .then(data => {
+                    dispatch(addPatient(data as Patient));
+                })
+                .catch(error => {
+                    console.error(`Patient id ${patientId} does not exist`, error);
+                })
+                .finally(() => {
+                    setFetching(false);
+                });
         }
         //setConfirm({ ...confirm, onCancel: closeConfirm });
     }, [patients[patientId]]);
@@ -292,6 +290,10 @@ const PatientInfo = () => {
                             <Table.Row>
                                 <Table.Cell>Date of birth</Table.Cell>
                                 <Table.Cell>{patients[patientId].dateOfBirth}</Table.Cell>
+                            </Table.Row>
+                            <Table.Row>
+                                <Table.Cell>Health rating</Table.Cell>
+                                <Table.Cell><HealthRatingBar showText rating={patients[patientId].healthRating} inlineText /></Table.Cell>
                             </Table.Row>
                         </Table.Body>
                     </Table>
