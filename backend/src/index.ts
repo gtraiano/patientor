@@ -1,4 +1,5 @@
-import { app, connectToDB, disconnectFromDB } from "./app";
+import app from "./app";
+import { connectToDB, disconnectFromDB } from './utils/db';
 import config from "./config";
 
 app.listen(config.app.PORT, () => {
