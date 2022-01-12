@@ -3,6 +3,7 @@ import jwt, { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 import RefreshToken from '../models/RefreshToken';
 import { InvalidCredentials } from '../services/auth';
 import config from '../config';
+import { DecodedAccessToken } from '../types';
 
 const getAccessToken = (request: Request): string | null => {
     // extract authorization token
@@ -16,16 +17,16 @@ const getAccessToken = (request: Request): string | null => {
 const decodeAccessToken = async (req: Request, _res: Response, next: NextFunction) => {
     // must not be executed on POST /api/auth 
     if(req.path === '/api/auth' && req.method === 'POST') return next();
-    if(req.path === '/api/users' && req.method === 'POST') return next();
+    //if(req.path === '/api/users' && req.method === 'POST') return next();
     try {
         const token = getAccessToken(req);
-        const decodedToken: any = jwt.verify(token as string, config.security.keys.ACCESS_TOKEN_SIGN_KEY as string);
+        const decodedToken = jwt.verify(token as string, config.security.keys.ACCESS_TOKEN_SIGN_KEY as string) as DecodedAccessToken;
         if (!token || !decodedToken.id) {
             throw new InvalidCredentials();
         }
         // store decoded token in request object
         Object.defineProperty(req, config.accessToken.name, { value: decodedToken, writable: false });
-        return next();
+        next();
     }
     catch(error) {
         return next(error);
@@ -38,7 +39,7 @@ const isUserLoggedIn = async (request: Request, _response: Response, next: NextF
     if(!loggedIn) {
         return next(new JsonWebTokenError('invalid token'));
     }
-    return next();
+    next();
 }
 
 const verifyRefreshToken = async (request: Request, _response: Response, next: NextFunction) => {
@@ -71,7 +72,7 @@ const verifyRefreshToken = async (request: Request, _response: Response, next: N
             return next(error);
         }
     }
-    return next();
+    next();
 }
 
 export {

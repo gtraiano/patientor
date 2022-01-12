@@ -39,27 +39,21 @@ export enum EntryType {
   
 export interface HealthCheckEntry extends BaseEntry {
     type: EntryType.HealthCheck,
-    //type: "HealthCheck",
     healthCheckRating: HealthCheckRating,
 }
 
 export interface HospitalEntry extends BaseEntry {
     type: EntryType.Hospital,
-    //type: "Hospital"
     discharge: Discharge
 }
 
 export interface OccupationalHealthcareEntry extends BaseEntry {
     type: EntryType.OccupationalHealthcare
-    //type: "OccupationalHealthcare",
     employerName: string,
     sickLeave?: SickLeave
 }
 
-export type Entry =
-  | HospitalEntry
-  | OccupationalHealthcareEntry
-  | HealthCheckEntry;
+export type Entry = | HospitalEntry | OccupationalHealthcareEntry | HealthCheckEntry;
 
 export type EditEntry  = Entry & { id: string };
 
@@ -73,7 +67,7 @@ export type Patient = {
     gender: Gender,
     occupation: string,
     entries: Entry[],
-    healthRating: number
+    healthRating: HealthCheckRating
 };
 
 export type PatientFormValues = {
@@ -85,7 +79,7 @@ export type PatientFormValues = {
 
 export type PublicPatient = Omit<Patient, 'ssn' | 'entries'>;
 
-export type NewPatient = Omit<Patient, 'id' | 'entries'>;
+export type NewPatient = Omit<Patient, 'id' | 'entries' | 'healthRating'>;
 
 export enum Gender {
     Male = 'male',
@@ -115,10 +109,16 @@ export interface User {
 export type NewUser = Omit<User, 'id' | 'createdAt'>
 
 export interface AccessToken {
-    token: string,
-    /*username: string,
+    token: string
+}
+
+export interface DecodedAccessToken {
+    username: string,
+    id: string,
     name?: string,
-    roles?: string[]*/
+    roles: Role[],
+    iat: number,
+    exp: number
 }
 
 export interface RefreshToken {
