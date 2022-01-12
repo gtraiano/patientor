@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import { useStateValue } from '../../state';
-import { TextField, NumberField, DateField, SelectEntryType, SelectDiagnosis } from '../FormFields';
+import { TextField, DateField, SelectEntryType, SelectDiagnosis } from '../FormFields';
 import { Diagnosis, EntryType, Discharge, HealthCheckRating, SickLeave } from '../../types/types';
 import { Button, DropdownOnSearchChangeData } from 'semantic-ui-react';
 import AddDiagnosisModal from '../AddDiagnosisModal';
 import axios from '../../controllers/axios';
 import { apiBaseUrl } from '../../constants';
 import { addDiagnosis } from '../../state/actions/diagnoses';
+import { SelectHealthRating } from '../FormFields/SelectHealthRating';
+//import { SelectHealthRating } from '../FormFields/SelectHealthRating';
 
 export type EntryFormValues = {
     id?: string;
@@ -125,7 +127,10 @@ const AddEntryForm = ({ onSubmit, onCancel, initialValues }: Props) => {
                 if (!values.type) {
                 errors.type = requiredError;
                 }
-                if(values.type === EntryType.HealthCheckEntry && values.healthCheckRating !== undefined && (values.healthCheckRating < 0 || values.healthCheckRating > 4)) {
+                if(
+                    values.type === EntryType.HealthCheckEntry && values.healthCheckRating !== undefined &&
+                    (values.healthCheckRating < HealthCheckRating.Healthy || values.healthCheckRating > HealthCheckRating.CriticalRisk)
+                ) {
                     errors.healthCheckRating = requiredError;
                 }
                 if(values.type === EntryType.HospitalEntry) {
@@ -177,13 +182,9 @@ const AddEntryForm = ({ onSubmit, onCancel, initialValues }: Props) => {
                     />
                     
                     {values.type === EntryType.HealthCheckEntry &&
-                        <Field
+                        <SelectHealthRating
                             label="Health check rating"
-                            placeholder="Health check rating"
                             name="healthCheckRating"
-                            min={0}
-                            max={4}
-                            component={NumberField}
                         />
                     }
                     {values.type === EntryType.HospitalEntry &&

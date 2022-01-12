@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "../../controllers/axios";
 import { useParams } from "react-router";
 import { useStateValue } from "../../state";
-import { Gender, Patient, EntryType, Entry, HealthCheckRating } from "../../types/types";
+import { Gender, Patient, EntryType, Entry } from "../../types/types";
 import { apiBaseUrl } from "../../constants";
 import { Button, CardGroup, Confirm, ConfirmProps, DropdownProps, Icon, Loader, Select, Table } from "semantic-ui-react";
 import PatientEntryCard, { EntryAction } from "../PatientEntryCard";
@@ -136,7 +136,8 @@ const PatientInfo = () => {
                 newEntry = {
                     ...newEntry,
                     //...(values.healthCheckRating !== undefined && { healthCheckRating: values.healthCheckRating })
-                    healthCheckRating: values.healthCheckRating as HealthCheckRating
+                    //healthCheckRating: values.healthCheckRating as HealthCheckRating
+                    healthCheckRating: Number(values.healthCheckRating) // select returns value as string!
                 };
                 break;
             case EntryType.HospitalEntry:
