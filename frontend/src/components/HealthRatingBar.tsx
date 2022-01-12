@@ -17,17 +17,28 @@ const HEALTHBAR_TEXTS = [
   'Health rating undetermined'
 ];
 
+const undeterminedStyle = {
+  opacity: 0.2,
+  filter: 'grayscale(100%)'
+};
+
+const maxRating = HealthCheckRating.CriticalRisk + 1;
+
 const HealthRatingBar = ({ rating, showText, inlineText = false }: BarProps) => {
   return (
     <div className="health-bar">
       {rating === HealthCheckRating.Undetermined
-        ? <Rating icon="heart" disabled rating={0} maxRating={4} style={{ opacity: 0.2, filter: 'grayscale(100%)'}} />
-        : <Rating icon="heart" disabled rating={4 - rating} maxRating={4} />
+        ? <Rating icon="heart" disabled rating={0} maxRating={maxRating} style={undeterminedStyle} />
+        : <Rating icon="heart" disabled rating={4 - rating} maxRating={maxRating} />
       }
       
       {showText
-        ? <p style={{ display: inlineText ? 'inline' : undefined }}
-          className={inlineText ? 'health-rating-text-inline' : undefined}>{HEALTHBAR_TEXTS[rating] || HEALTHBAR_TEXTS[4]}</p> 
+        ? <p
+            style={{ display: inlineText ? 'inline' : undefined }}
+            className={inlineText ? 'health-rating-text-inline' : undefined}
+          >
+            {HEALTHBAR_TEXTS[rating] || HEALTHBAR_TEXTS[4]}
+          </p>
         : null
       }
     </div>
