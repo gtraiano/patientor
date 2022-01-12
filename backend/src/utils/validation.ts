@@ -13,7 +13,6 @@ const matchesPattern = (str: string, pattern: RegExp): boolean => {
 };
 
 const isValidGender = (gender: string): boolean => {
-    //return Object.keys(Gender).includes(gender);
     return Object.values(Gender).includes(gender as Gender);
 };
 
@@ -89,7 +88,7 @@ const parseHealthCheckEntry = (entry: HealthCheckEntry): HealthCheckEntry => {
         entry.healthCheckRating === undefined || !isNumber(entry.healthCheckRating) ||
         !Object.values(HealthCheckRating).filter(n => !isNaN(Number(n))).includes(entry.healthCheckRating)
     ) {
-        throw new Error('Incorrect or missing health check rating')
+        throw new Error('Incorrect or missing health check rating');
     }
     return entry;
 }
@@ -97,7 +96,7 @@ const parseHealthCheckEntry = (entry: HealthCheckEntry): HealthCheckEntry => {
 const parseHospitalEntry = (entry: HospitalEntry): HospitalEntry => {
     isValidBaseEntry(entry);
     if(!entry.discharge) {
-        throw new Error('Incorrect or missing health check rating')
+        throw new Error('Incorrect or missing discharge');
     }
     if(!entry.discharge.criteria || !isString(entry.discharge.criteria)) {
         throw new Error('Incorrect or missing discharge criteria');
