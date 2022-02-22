@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt, { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 import RefreshToken from '../models/RefreshToken';
-import { InvalidCredentials } from '../services/auth';
+import authServices, { InvalidCredentials } from '../services/auth';
 import config from '../config';
 import { DecodedAccessToken } from '../types';
 
@@ -57,7 +57,7 @@ const verifyRefreshToken = async (request: Request, _response: Response, next: N
             // check refresh token is still alive (trust token from db)
             if(new Date(retrieved.expires) < new Date()) {
                 // remove expired token from DB
-                await retrieved.delete();
+                await authServices.revokeRefreshToken(retrieved.token);
                 throw new TokenExpiredError('refresh token expired', new Date(request.cookies[config.refreshToken.cookie.name].expires*1000));
             }
             // verify against sign key

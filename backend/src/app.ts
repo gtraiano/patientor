@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { decodeAccessToken, verifyRefreshToken } from './middlewares/auth';
-import { extractUserRoles } from './middlewares/permissions';
+import { isOperationAllowed } from './middlewares/permissions/permissions';
 import errorMiddleware from './middlewares/error'
 
 import ping from './routes/ping';
@@ -24,7 +24,7 @@ app.use(cors());
 app.use(cookieParser());
 app.use(decodeAccessToken);
 app.use(verifyRefreshToken);
-app.use(extractUserRoles);
+app.use(isOperationAllowed);
 app.use(errorMiddleware.auth.authErrorHandler);
 
 // routes
