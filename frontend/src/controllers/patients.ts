@@ -1,6 +1,6 @@
 import { apiBaseUrl } from '../constants';
 import { Patient } from '../types/types';
-import axios from './axios';
+import axios from './';
 
 export const fetchPatients = async (): Promise<Patient[]> => {
     const response = await axios.get<Patient[]>(

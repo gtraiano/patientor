@@ -1,5 +1,5 @@
 import React from "react";
-import axios, { setAuthToken } from './controllers/axios';
+import axios, { setAuthToken } from './controllers';
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import { Button, Divider, Header, Container, Message } from "semantic-ui-react";
 
@@ -10,7 +10,7 @@ import { setDiagnosisList } from "./state/actions/diagnoses";
 import { loginUser, logoutUser as clearAuth } from "./state/actions/auth";
 import { addScheduled, removeScheduled, removeAllScheduled } from "./state/actions/scheduler";
 import { displayMessage, clearMessage } from "./state/actions/message";
-import { Auth, Diagnosis, MessageVariation, Patient } from "./types/types";
+import { Auth, Diagnosis, MessageVariation } from "./types/types";
 
 import PatientListPage from "./components/PatientListPage";
 import PatientInfo from "./components/PatientInfoPage/PatientInfo";
@@ -20,9 +20,14 @@ import './styles/general.css';
 import { loginUser as authLogin, logoutUser, registerUser, scheduleRefreshToken } from "./controllers/auth";
 import AuthenticationForm, { AuthenticationFormValues } from "./components/AuthenticationPage";
 
+import { fetchPatients } from './controllers';
+import UserInfo from "./components/UserInfo";
+
 const App = () => {
   const [{ auth, scheduler, message }, dispatch] = useStateValue();
   let refreshHandler: NodeJS.Timeout | undefined = undefined;
+  //let checkBackendHandler: NodeJS.Timeout | undefined = undefined;
+  //let backendStatus: boolean | null = null;
 
   React.useEffect(() => {
       // retrieve stored access token
@@ -36,10 +41,7 @@ const App = () => {
   React.useEffect(() => {
       const fetchPatientList = async (): Promise<void> => {
           try {
-              const { data: patientListFromApi } = await axios.get<Patient[]>(
-                `${apiBaseUrl}/patients`,
-              );
-              dispatch(setPatientList(patientListFromApi));
+              dispatch(setPatientList(await fetchPatients()));
           }
           catch(e) {
               console.error(e);
@@ -57,12 +59,26 @@ const App = () => {
           }
       };
 
+      /*const checkBackendStatus = async (): Promise<boolean> => {
+        try {
+          const response = await axios.get(`${apiBaseUrl}/ping`);
+          return response.status === 200;
+        }
+        catch(error) {
+          return false;
+        }
+      }*/
+
       // check backend is online
-      void axios
+      /*void axios
           .get<void>(`${apiBaseUrl}/ping`)
+          .then(res => {
+            res.status === 200 ? true : false;
+          })
           .catch(error => {
               console.log(error);
-          });
+              return false;
+          });*/
       
       console.log(`user is logged ${auth ? 'in' : 'out'}`);
       // is logged in
@@ -190,7 +206,7 @@ const App = () => {
                     alignItems: 'center'
                   }}
                 >
-                  <span>logged in as <strong>{auth.name || auth.username}</strong>&nbsp;</span>
+                  <span>logged in as <Link to={`/users/${auth.id}`}><strong>{auth.name || auth.username}</strong></Link>&nbsp;</span>
                   <Button
                     basic
                     size="tiny"
@@ -211,7 +227,10 @@ const App = () => {
                 <Route path="/diagnoses">
                   <DiagnosisListPage />
                 </Route>
-                <Route exact path="/">
+                <Route  path="/users/:id">
+                  <UserInfo/>
+                </Route>
+                <Route path="/">
                   <PatientListPage />
                 </Route>
                 <Route path="*">

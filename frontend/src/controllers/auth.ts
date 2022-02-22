@@ -1,4 +1,4 @@
-import axios, { clearAuthToken, setAuthToken } from './axios';
+import axios, { clearAuthToken, setAuthToken } from './';
 import { apiBaseUrl } from "../constants";
 import { Auth, User } from "../types/types";
 
