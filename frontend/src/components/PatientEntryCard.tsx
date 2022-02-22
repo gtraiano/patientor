@@ -1,4 +1,4 @@
-import axios from '../controllers/axios';
+import axios from '../controllers';
 import React, { useEffect } from 'react';
 import { Card, Icon, SemanticICONS, Table } from 'semantic-ui-react';
 import { apiBaseUrl } from '../constants';
