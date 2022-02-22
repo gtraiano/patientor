@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "../../controllers/axios";
+import axios from "../../controllers";
 import { Container, Table, Button, Icon, Confirm, ConfirmProps } from "semantic-ui-react";
 
 import { DiagnosisFormValues } from "../AddDiagnosisModal/AddDiagnosisForm";
@@ -72,9 +72,12 @@ const DiagnosisListPage = () => {
         : await axios.put<Diagnosis>(`${apiBaseUrl}/diagnoses/${values.code}`, values);
       dispatch(addDiagnosis(newDiagnosis));
       closeModal();
-    } catch (e: any) {
-      console.error(e.response?.data || 'Unknown Error');
-      setError(e.response?.data?.error || 'Unknown error');
+    }
+    catch (e) {
+      if(axios.isAxiosError(e)) {
+        console.error(e.response?.data || 'Unknown Error');
+        setError(e.response?.data?.error as string || 'Unknown error');
+      }
     }
   };
 
@@ -86,9 +89,11 @@ const DiagnosisListPage = () => {
       //}
       closeModal();
     }
-    catch(e: any) {
-      console.error(e.response?.data || 'Unknown Error');
-      setError(e.response?.data?.error || 'Unknown error');
+    catch(e) {
+      if(axios.isAxiosError(e)) {
+        console.error(e.response?.data || 'Unknown Error');
+        setError(e.response?.data?.error as string || 'Unknown error');
+      }
     }
   };
 

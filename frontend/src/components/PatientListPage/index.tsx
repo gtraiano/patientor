@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "../../controllers/axios";
+import axios from "../../controllers";
 import { Container, Table, Button, Icon, Input } from "semantic-ui-react";
 
 import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
@@ -33,9 +33,12 @@ const PatientListPage = () => {
       );
       dispatch(addPatient(newPatient));
       closeModal();
-    } catch (e: any) {
-      console.error(e.response?.data || 'Unknown Error');
-      setError(e.response?.data?.error || 'Unknown error');
+    }
+    catch(e) {
+      if(axios.isAxiosError(e)) {
+        console.error(e.response?.data || 'Unknown Error');
+        setError(e.response?.data?.error as string || 'Unknown error');
+      }
     }
   };
 

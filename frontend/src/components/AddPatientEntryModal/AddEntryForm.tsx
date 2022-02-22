@@ -5,11 +5,10 @@ import { TextField, DateField, SelectEntryType, SelectDiagnosis } from '../FormF
 import { Diagnosis, EntryType, Discharge, HealthCheckRating, SickLeave } from '../../types/types';
 import { Button, DropdownOnSearchChangeData } from 'semantic-ui-react';
 import AddDiagnosisModal from '../AddDiagnosisModal';
-import axios from '../../controllers/axios';
+import axios from '../../controllers';
 import { apiBaseUrl } from '../../constants';
 import { addDiagnosis } from '../../state/actions/diagnoses';
 import { SelectHealthRating } from '../FormFields/SelectHealthRating';
-//import { SelectHealthRating } from '../FormFields/SelectHealthRating';
 
 export type EntryFormValues = {
     id?: string;
@@ -46,12 +45,12 @@ const AddEntryForm = ({ onSubmit, onCancel, initialValues }: Props) => {
             dispatch(addDiagnosis(res.data));
             setSearchModalOpen(false);
         }
-        catch(error: any) {
+        catch(error) {
             if(axios.isAxiosError(error)) {
-                setError(error.response?.data.message);
+                setError(error?.response?.data.message as string);
             }
             else {
-                setError(error.message);
+                setError((error as Error).message);
             }
             console.log(error);
             //setError(error.response.data.message);
