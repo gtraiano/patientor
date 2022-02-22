@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "../../controllers/axios";
+import axios from "../../controllers";
 import { useParams } from "react-router";
 import { useStateValue } from "../../state";
 import { Gender, Patient, EntryType, Entry } from "../../types/types";
@@ -113,7 +113,7 @@ const PatientInfo = () => {
     const renderPatientEntries = (filter = '') => {
         return (
             <React.Fragment>
-                {patients[patientId].entries && patients[patientId].entries.length > 0
+                {patientId && patients[patientId].entries && patients[patientId].entries.length > 0
 
                     ? <CardGroup>
                         {patients[patientId]
@@ -129,6 +129,7 @@ const PatientInfo = () => {
     };
 
     const onSubmitEntry = async (values: EntryFormValues) => {
+        if(!patientId) return;
         let newEntry = Object.fromEntries(Object.entries(values).filter(([key, ]) => !specialEntryKeys.includes(key)));
 
         switch(values.type) {
@@ -159,7 +160,7 @@ const PatientInfo = () => {
 
         try {
             let response;
-            if(initialValues && values.id) { // edit existing entry
+            if(initialValues && values?.id) { // edit existing entry
                 response = await axios.put<Patient>(`${apiBaseUrl}/patients/${patientId}/entries/${values.id}`, { id: values.id, ...newEntry });
             }
             else { // post new entry
@@ -170,9 +171,11 @@ const PatientInfo = () => {
             closeEntryModal();
             //history.back();
         }
-        catch(error: any) {
+        catch(error) {
             console.error(error);
-            setError(error.response.data.error);
+            if(axios.isAxiosError(error)) {
+                setError(error?.response?.data.error as string);
+            }
         }
     };
 
@@ -182,6 +185,7 @@ const PatientInfo = () => {
     };
 
     const onDeleteEntry = async (entry: Entry) => {
+        if(!patientId) return;
         try {
             const { data: patient } = await axios.delete<Patient>(`${apiBaseUrl}/patients/${patientId}/entries/${entry.id}`);
             dispatch(addPatient(patient));
@@ -192,6 +196,7 @@ const PatientInfo = () => {
     };
 
     const onSubmitPatient = async (patient: PatientFormValues) => {
+        if(!patientId) return;
         try {
             const { data: submittedPatient } = await axios.put<Patient>(
                 `${apiBaseUrl}/patients/${patientId}`,
@@ -201,8 +206,10 @@ const PatientInfo = () => {
             closePatientModal();
         }
         catch(error: any) {
-            console.log(error.response.data);
-            setError(error.response.data.error);
+            if(axios.isAxiosError(error)) {
+                console.log(error.response?.data);
+                setError(error.response?.data.error as string);
+            }
         }
     };
 
@@ -216,14 +223,16 @@ const PatientInfo = () => {
             await axios.delete(`${apiBaseUrl}/patients/${id}`);
             dispatch(removePatient(id));
         }
-        catch(error: any) {
-            console.log(error.response.data);
-            setError(error.response.data.error);
+        catch(error: unknown) {
+            console.log(error);
+            if(axios.isAxiosError(error)) {
+                setError(error?.response?.data?.error as string);
+            }
         }
     };
 
     useEffect(() => {
-        if(!patients[patientId] || !patients[patientId].entries) {
+        if(patientId && (!patients[patientId] || !patients[patientId].entries)) {
             setFetching(true);
             void fetchPatient(patientId)
                 .then(data => {
@@ -237,13 +246,14 @@ const PatientInfo = () => {
                 });
         }
         //setConfirm({ ...confirm, onCancel: closeConfirm });
-    }, [patients[patientId]]);
-
-
-    if(patients[patientId] === null) {
+    }, [patients[patientId || '']]);
+    
+    // nothing to render
+    if(!patientId || patients[patientId] === null) {
         return null;
     }
 
+    // patient does not exist
     if(patients[patientId] === undefined) {
         return (
             <div>
