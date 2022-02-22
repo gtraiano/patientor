@@ -59,10 +59,7 @@ export interface OccupationalHealthcareEntry extends BaseEntry {
   sickLeave?: SickLeave
 }
 
-export type Entry =
-| HospitalEntry
-| OccupationalHealthcareEntry
-| HealthCheckEntry;
+export type Entry = HospitalEntry | OccupationalHealthcareEntry | HealthCheckEntry;
 
 export type EditEntry  = Entry & { id: string };
 
@@ -77,7 +74,7 @@ export type Patient = {
   healthRating: HealthCheckRating
 };
 
-export interface AcessToken {
+export interface AccessToken {
   token: string,
   exp: number,
   iat: number,
@@ -96,7 +93,7 @@ export interface User {
   roles: [string]
 }
 
-export type Auth = AcessToken | null;
+export type Auth = AccessToken | null;
 
 export enum MessageVariation {
   error = 'error',
