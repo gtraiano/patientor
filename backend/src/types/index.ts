@@ -87,14 +87,14 @@ export enum Gender {
     Other = 'other'
 }
 
-export enum Roles {
+export enum UserRoles {
     User = 'user',
     Admin = 'admin',
     Moderator = 'moderator'
 }
 
-export interface Role {
-    name: Roles
+export interface UserRole {
+    name: UserRoles
 }
 
 export interface User {
@@ -103,7 +103,7 @@ export interface User {
     username: string,
     password: string,
     createdAt: number,
-    roles: [Role]
+    roles: UserRole[]
 }
 
 export type NewUser = Omit<User, 'id' | 'createdAt'>
@@ -116,7 +116,7 @@ export interface DecodedAccessToken {
     username: string,
     id: string,
     name?: string,
-    roles: Role[],
+    roles: UserRole[],
     iat: number,
     exp: number
 }

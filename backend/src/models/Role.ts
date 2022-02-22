@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
-import { Role, Roles } from '../types';
+import { UserRole, UserRoles } from '../types';
 
-export interface RoleDoc extends Role, Document {
+export interface RoleDoc extends UserRole, Document {
     id: string
 };
 
@@ -10,7 +10,7 @@ const RoleSchema = new Schema<RoleDoc>({
     name: {
         type: String,
         enum: {
-            values: Object.values(Roles),
+            values: Object.values(UserRoles),
             message: '{VALUE} is not a valid role'
         },
         unique: true

@@ -1,10 +1,10 @@
 import Role from '../models/Role';
-import { Roles } from '../types';
+import { UserRoles } from '../types';
 
 const initializeRoles = async (): Promise<void> => {
     if(await Role.estimatedDocumentCount() === 0) {
         const addedRoles: [string?] = [];
-        for(const role of Object.values(Roles)) {
+        for(const role of Object.values(UserRoles)) {
             try {
                 await new Role({
                     name: role

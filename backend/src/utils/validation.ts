@@ -1,4 +1,4 @@
-import { Gender, NewEntry, EntryType, HealthCheckEntry, HealthCheckRating, HospitalEntry, OccupationalHealthcareEntry, Diagnosis, PatientFormValues, NewUser, Roles, Role } from "../types";
+import { Gender, NewEntry, EntryType, HealthCheckEntry, HealthCheckRating, HospitalEntry, OccupationalHealthcareEntry, Diagnosis, PatientFormValues, NewUser, UserRoles, UserRole } from "../types";
 
 const isString = (str: unknown): boolean => {
     return typeof str === 'string' || str instanceof String;
@@ -174,8 +174,8 @@ const parseUser = (user: any): NewUser => {
         if(!user.roles.length) {
             throw new Error('Must define at least 1 role');
         }
-        user.roles.forEach((role: Role) => {
-            const roles = Object.values(Roles);
+        user.roles.forEach((role: UserRole) => {
+            const roles = Object.values(UserRoles);
             if(!roles.includes(role.name)) {
                 throw new Error(`${role.name} is not a valid user role`);
             }
