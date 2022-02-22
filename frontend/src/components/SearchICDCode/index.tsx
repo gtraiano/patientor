@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from '../../controllers/axios';
+import axios from '../../controllers';
 import { apiBaseUrl } from '../../constants';
 import { Form, Segment, Label, SearchResults } from 'semantic-ui-react';
 import { useStateValue } from '../../state';
@@ -86,6 +86,7 @@ const SearchICDCode = () => {
             catch(error: any) {
                 console.log(error);
                 setResults({ results: [], terms: terms, error: error.message as string });
+                setFetching(false);
             }
         }
     };
