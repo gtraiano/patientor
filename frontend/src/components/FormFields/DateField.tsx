@@ -39,15 +39,15 @@ export const DateField = ({
   
     useEffect(() => { // initialize date from field prop
       if(field.value !== undefined || field.value !== null) {
-        setFieldValue(field.name, dateFormatter(field.value));
+        setFieldValue(field.name, dateFormatter(field.value as string));
         setFieldTouched(field.name, false);
       }
     }, []);
   
     useEffect(() => { // instead of onChange for field prop
-      if(!/\d{1,2}-\d{1,2}-\d{4}/g.test(field.value)) // do nothing until field is filled in
+      if(!/\d{1,2}-\d{1,2}-\d{4}/g.test(field.value as string)) // do nothing until field is filled in
         return;
-      setFieldValue(field.name, dateFormatter(field.value));
+      setFieldValue(field.name, dateFormatter(field.value as string));
       setFieldTouched(field.name, true);
     }, [field.value]);
   
