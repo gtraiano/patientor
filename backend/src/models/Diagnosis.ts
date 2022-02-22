@@ -28,4 +28,4 @@ DiagnosisSchema.set('toJSON', {
 
 DiagnosisSchema.plugin(mongooseUniqueValidator);
 
-export default mongoose.model('Diagnosis', DiagnosisSchema, 'Diagnoses');
+export default mongoose.model<Diagnosis & mongoose.Document>('Diagnosis', DiagnosisSchema, 'Diagnoses');

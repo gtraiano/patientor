@@ -29,4 +29,4 @@ RefreshTokenSchema.set('toJSON', {
 
 RefreshTokenSchema.plugin(mongooseUniqueValidator);
 
-export default mongoose.model('RefreshToken', RefreshTokenSchema, 'RefreshTokens');
+export default mongoose.model<RefreshToken>('RefreshToken', RefreshTokenSchema, 'RefreshTokens');
