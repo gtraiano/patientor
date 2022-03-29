@@ -227,10 +227,10 @@ const App = () => {
                 <Route path="/diagnoses">
                   <DiagnosisListPage />
                 </Route>
-                <Route  path="/users/:id">
+                <Route path="/users/:id">
                   <UserInfo/>
                 </Route>
-                <Route path="/">
+                <Route exact path="/">
                   <PatientListPage />
                 </Route>
                 <Route path="*">
