@@ -23,15 +23,7 @@ const generateRefreshToken = async (userId: string, expires: Date): Promise<IRef
 
 const saveRefreshToken = async (token: IRefreshToken) => {
     // save refresh token in db
-    try {
-        await RefreshToken.create(token);
-    }
-    catch(error: any) {
-        if(error.name === 'ValidationError') { // edge case: user attempts log in after not having logged out
-            console.log('user already has refresh token stored'); // overlook error, could implement system for multiple active refresh tokens for same user id
-        }
-        else throw error;
-    }
+    await RefreshToken.create(token);
 }
 
 const loginUser = async (userObj: { username: string, password: string }) => {
@@ -56,7 +48,25 @@ const loginUser = async (userObj: { username: string, password: string }) => {
     
     // generate & save refresh token
     const refreshToken = await generateRefreshToken(user.id, config.refreshToken.cookie.methods.expires());
-    await saveRefreshToken(refreshToken);
+    try {
+        await saveRefreshToken(refreshToken);
+    }
+    catch(error: any) {
+        if(error.name === 'ValidationError') { // edge case: user attempts log in after not having logged out
+            // update refresh token with fresh toekn for given user id
+            const updated = await RefreshToken.updateOne(
+                {
+                    userId: user.id
+                },
+                {
+                    expires: refreshToken.expires,
+                    token: refreshToken.token
+                }
+            );
+            console.log(`Existing refresh token for user ${user.id} was ${updated.modifiedCount === 1 ? '' : 'not'} updated sucessfully`);
+        }
+        else throw error;
+    }
     
     return {
         accessToken,
