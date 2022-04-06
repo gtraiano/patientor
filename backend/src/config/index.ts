@@ -6,8 +6,8 @@ const refreshTokenOptions = {
     secure: true
 };
 
-const PORT= process.env.PORT || 3001;
-const MONGODB_URI= process.env.MONGODB_URI;
+const PORT = process.env.PORT || 3001;
+const MONGODB_URI = process.env.MONGODB_URI;
 const ACCESS_TOKEN_SIGN_KEY = process.env.ACCESS_TOKEN_KEY;
 const REFRESH_TOKEN_SIGN_KEY = process.env.REFRESH_TOKEN_KEY;
 
@@ -29,6 +29,17 @@ export default {
     },
     app: {
         PORT
+    },
+    routes: {
+        api: {
+            root: '/api',
+            auth: '/auth',
+            diagnoses: '/diagnoses',
+            patients: '/patients',
+            icdc: '/icdclookup',
+            users: '/users',
+            ping: '/ping'
+        }
     },
     db: {
         MONGODB_URI

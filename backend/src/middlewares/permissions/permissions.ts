@@ -33,7 +33,7 @@ const parseUrlPath = (path:string) : {
 };
 
 export const isOperationAllowed = (req: Request, _res: Response, next: NextFunction): void => {
-    if(req.path === '/api/auth') return next();
+    if(req.path === `${config.routes.api.root}${config.routes.api.auth}`) return next();
     // user token
     const user: DecodedAccessToken = (req as any)[config.accessToken.name];
     // request url route and id

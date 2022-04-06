@@ -1,5 +1,6 @@
 import { UserRole, UserRoles } from "../../types";
 import { CustomError } from "../error";
+import config from '../../config';
 
 interface MethodRule {
     params: boolean,
@@ -13,7 +14,7 @@ interface RouteRule {
 const rules = new Map<string, RouteRule>();
 // users route rules
 rules.set(
-    '/api/users',
+    `${config.routes.api.root}${config.routes.api.users}`,
     {
         'GET': [
             {
@@ -61,7 +62,7 @@ rules.set(
 
 // patients route rules
 rules.set(
-    '/api/patients',
+    `${config.routes.api.root}${config.routes.api.patients}`,
     {
         'GET': [
             {
@@ -90,7 +91,7 @@ rules.set(
 
 // diagnoses routes rules
 rules.set(
-    '/api/diagnoses',
+    `${config.routes.api.root}${config.routes.api.diagnoses}`,
     {
         'GET': [
             {

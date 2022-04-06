@@ -12,11 +12,12 @@ import patientsRouter from './routes/patients';
 import ICDCLookupRouter from './routes/icdcodelookup';
 import usersRouter from './routes/users';
 import authRouter from './routes/auth';
+import config from './config';
 
 const app = express();
 
 // no middleware involved
-app.use('/api/ping', ping);
+app.use(`${config.routes.api.root}${config.routes.api.ping}`, ping);
 
 // middlewares
 app.use(express.json());
@@ -28,11 +29,11 @@ app.use(isOperationAllowed);
 app.use(errorMiddleware.auth.authErrorHandler);
 
 // routes
-app.use('/api/auth', authRouter);
-app.use('/api/diagnoses', diagnosesRouter);
-app.use('/api/patients', patientsRouter);
-app.use('/api/icdclookup', ICDCLookupRouter);
-app.use('/api/users', usersRouter);
+app.use(`${config.routes.api.root}${config.routes.api.auth}`, authRouter);
+app.use(`${config.routes.api.root}${config.routes.api.diagnoses}`, diagnosesRouter);
+app.use(`${config.routes.api.root}${config.routes.api.patients}`, patientsRouter);
+app.use(`${config.routes.api.root}${config.routes.api.icdc}`, ICDCLookupRouter);
+app.use(`${config.routes.api.root}${config.routes.api.users}`, usersRouter);
 
 // error handling
 app.use(errorMiddleware.db.dbErrorHandler);

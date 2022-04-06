@@ -15,9 +15,8 @@ const getAccessToken = (request: Request): string | null => {
 }
 
 const decodeAccessToken = async (req: Request, _res: Response, next: NextFunction) => {
-    // must not be executed on POST /api/auth 
-    if(req.path === '/api/auth' && req.method === 'POST') return next();
-    //if(req.path === '/api/users' && req.method === 'POST') return next();
+    // must not be executed on POST /api/auth
+    if(req.path === `${config.routes.api.root}${config.routes.api.auth}` && req.method === 'POST') return next();
     try {
         const token = getAccessToken(req);
         const decodedToken = jwt.verify(token as string, config.security.keys.ACCESS_TOKEN_SIGN_KEY as string) as DecodedAccessToken;
@@ -44,7 +43,7 @@ const isUserLoggedIn = async (request: Request, _response: Response, next: NextF
 
 const verifyRefreshToken = async (request: Request, _response: Response, next: NextFunction) => {
     // must be executed only on PUT /api/auth
-    if(request.path === '/api/auth' && request.method === 'PUT') {
+    if(request.path === `${config.routes.api.root}${config.routes.api.auth}` && request.method === 'PUT') {
         try {
             const refreshToken = request.cookies[config.refreshToken.cookie.name];
             //console.log('read refresh token', refreshToken);
