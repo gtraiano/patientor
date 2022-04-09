@@ -21,7 +21,7 @@ rules.set(
                 params: true,
                 allow: (roles: UserRole[], sourceId: string, targetId?: string) => {
                     const allowed = roles.find(r => r.name === UserRoles.Admin) !== undefined || sourceId === targetId;
-                    if(!allowed) throw new CustomError(`You have no permission to access user id ${targetId ? targetId : ''}`, 401);
+                    if(!allowed) throw new CustomError(`You have no permission to access user id ${targetId ?? ''}`, 401);
                     return allowed;
                     
                 }
@@ -36,7 +36,7 @@ rules.set(
                 params: true,
                 allow: (roles: UserRole[], sourceId: string, targetId?: string) => {
                     const allowed = roles.find(r => r.name === UserRoles.Admin) !== undefined || sourceId === targetId;
-                    if(!allowed) throw new CustomError(`You have no permission to edit user id ${targetId ? targetId : ''}`, 401);
+                    if(!allowed) throw new CustomError(`You have no permission to edit user id ${targetId ?? ''}`, 401);
                     return allowed;
                 }
             }
@@ -52,7 +52,7 @@ rules.set(
                 params: true,
                 allow: (roles: UserRole[], sourceId: string, targetId?: string) => {
                     const allowed = roles.find(r => r.name === UserRoles.Admin) !== undefined || sourceId === targetId;
-                    if(!allowed) throw new CustomError(`You have no permission to delete user id ${targetId ? targetId : ''}`, 401);
+                    if(!allowed) throw new CustomError(`You have no permission to delete user id ${targetId ?? ''}`, 401);
                     return allowed;
                 }
             }
@@ -118,10 +118,22 @@ rules.set(
         'DELETE': [
             {
                 params: true,
-                allow: () => true
+                allow: (roles: UserRole[], ..._args) => roles.find(r => r.name === UserRoles.Admin) !== undefined
             }
         ],
     }
 );
+
+rules.set(
+    `${config.routes.api.root}${config.routes.api.ping}`,
+    {
+        'GET': [
+            {
+                params: false,
+                allow: () => true
+            }
+        ]
+    }
+)
 
 export default rules;

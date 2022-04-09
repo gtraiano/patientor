@@ -4,12 +4,7 @@ import rules from './rules';
 import { DecodedAccessToken } from '../../types';
 import { CustomError } from '../error';
 
-
-
-
-
 /**
- * 
  * @param path  url path
  * @param depth path depth
  * @returns part of url path between [depth, depth + 1] number of forward slashes
@@ -33,6 +28,7 @@ const parseUrlPath = (path:string) : {
 };
 
 export const isOperationAllowed = (req: Request, _res: Response, next: NextFunction): void => {
+    // do not run on auth route
     if(req.path === `${config.routes.api.root}${config.routes.api.auth}`) return next();
     // user token
     const user: DecodedAccessToken = (req as any)[config.accessToken.name];

@@ -1,16 +1,15 @@
-import { apiBaseUrl } from '../constants';
 import { Patient } from '../types/types';
 import axios from './';
 
 export const fetchPatients = async (): Promise<Patient[]> => {
     const response = await axios.get<Patient[]>(
-        `${apiBaseUrl}/patients`,
+        '/patients',
     );
     return response.data;
 };
 
 export const fetchPatient = async (id: string): Promise<Patient | undefined> => {
-    const { data } = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
+    const { data } = await axios.get<Patient>(`/patients/${id}`);
     return data;
 };
 

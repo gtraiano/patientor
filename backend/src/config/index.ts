@@ -45,7 +45,11 @@ export default {
         MONGODB_URI
     },
     security: {
-        keys: {
+        https: { // ssl
+            SSL_CRT_FILE: process.env.SSL_CRT_FILE,
+            SSL_KEY_FILE: process.env.SSL_KEY_FILE
+        },
+        keys: { // token sign keys
             ACCESS_TOKEN_SIGN_KEY,
             REFRESH_TOKEN_SIGN_KEY
         },

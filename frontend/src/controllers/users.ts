@@ -1,4 +1,3 @@
-import { apiBaseUrl } from '../constants';
 import axios from './';
 
 interface IUserInfo {
@@ -10,13 +9,13 @@ interface IUserInfo {
 
 export const fetchUsers = async (): Promise<IUserInfo[]> => {
     const response = await axios.get<IUserInfo[]>(
-        `${apiBaseUrl}/users`,
+        '/users',
     );
     return response.data;
 };
 
 export const fetchUser = async (id: string): Promise<IUserInfo | undefined> => {
-    const { data } = await axios.get<IUserInfo>(`${apiBaseUrl}/users/${id}`);
+    const { data } = await axios.get<IUserInfo>(`/users/${id}`);
     return data;
 };
 

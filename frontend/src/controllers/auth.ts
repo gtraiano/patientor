@@ -1,5 +1,4 @@
 import axios, { clearAuthToken, setAuthToken } from './';
-import { apiBaseUrl } from "../constants";
 import { Auth, User } from "../types/types";
 
 const decodeAccessToken = (token: string): Auth => {
@@ -16,9 +15,9 @@ const decodeAccessToken = (token: string): Auth => {
 
 export const loginUser = async (username: string, password: string): Promise<Auth> => {
     const response = await axios.post<string>(
-        `${apiBaseUrl}/auth`,
+        '/auth',
         { username, password },
-        { withCredentials: true }
+        //{ withCredentials: true }
     );
     const accessToken = decodeAccessToken(response.data);
     setAuthToken(accessToken?.token);
@@ -27,7 +26,7 @@ export const loginUser = async (username: string, password: string): Promise<Aut
 
 export const logoutUser = async (userId: string) => {
     const response = await axios.delete(
-        `${apiBaseUrl}/auth`,
+        '/auth',
         {
             data: { id: userId }
         }
@@ -38,7 +37,7 @@ export const logoutUser = async (userId: string) => {
 
 export const registerUser = async (username: string, password: string, name?: string, roles?: string[]): Promise<User> => {
     const response = await axios.post<User>(
-        `${apiBaseUrl}/users`,
+        '/users',
         { username, password, name, roles },
     );
     const user = response.data;
@@ -46,7 +45,7 @@ export const registerUser = async (username: string, password: string, name?: st
 };
 
 export const refreshAccessToken = async (): Promise<Auth> => {
-    const response = await axios.put<string>(`${apiBaseUrl}/auth`);
+    const response = await axios.put<string>('/auth');
     return decodeAccessToken(response.data);
 };
 

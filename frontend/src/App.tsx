@@ -58,27 +58,6 @@ const App = () => {
               console.error(error);
           }
       };
-
-      /*const checkBackendStatus = async (): Promise<boolean> => {
-        try {
-          const response = await axios.get(`${apiBaseUrl}/ping`);
-          return response.status === 200;
-        }
-        catch(error) {
-          return false;
-        }
-      }*/
-
-      // check backend is online
-      /*void axios
-          .get<void>(`${apiBaseUrl}/ping`)
-          .then(res => {
-            res.status === 200 ? true : false;
-          })
-          .catch(error => {
-              console.log(error);
-              return false;
-          });*/
       
       console.log(`user is logged ${auth ? 'in' : 'out'}`);
       // is logged in
