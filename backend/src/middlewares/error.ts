@@ -13,7 +13,7 @@ export class CustomError extends Error {
 
 const authErrorHandler = (error: any, _request: Request, response: Response, next: NextFunction) => {
     if (error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id' || error.message });
+        return response.status(400).json({ error: 'malformatted id' || error.message });
     }
     else if (error.name === 'ValidationError') {
         return response.status(400).json({ error: error.message });
@@ -31,7 +31,7 @@ const authErrorHandler = (error: any, _request: Request, response: Response, nex
 };
 
 const dbErrorHandler = (error: MongooseError | any, _request: Request, response: Response, next: NextFunction) => {
-    if(error instanceof MongooseError) return response.status(400).json({ error: error.message});
+    if(error instanceof MongooseError) return response.status(400).json({ error: error.message });
     return next(error);
 }
 
