@@ -6,11 +6,6 @@ const refreshTokenOptions = {
     secure: true
 };
 
-const PORT = process.env.PORT || 3001;
-const MONGODB_URI = process.env.MONGODB_URI;
-const ACCESS_TOKEN_SIGN_KEY = process.env.ACCESS_TOKEN_KEY;
-const REFRESH_TOKEN_SIGN_KEY = process.env.REFRESH_TOKEN_KEY;
-
 const expires = () => new Date(Date.now() + 24*60*60*1000);
 
 export default {
@@ -28,7 +23,7 @@ export default {
         name: 'accessToken'
     },
     app: {
-        PORT
+        PORT: process.env.PORT || 3001
     },
     routes: {
         api: {
@@ -42,7 +37,7 @@ export default {
         }
     },
     db: {
-        MONGODB_URI
+        MONGODB_URI: process.env.MONGODB_URI
     },
     security: {
         https: { // ssl
@@ -50,8 +45,8 @@ export default {
             SSL_KEY_FILE: process.env.SSL_KEY_FILE
         },
         keys: { // token sign keys
-            ACCESS_TOKEN_SIGN_KEY,
-            REFRESH_TOKEN_SIGN_KEY
+            ACCESS_TOKEN_SIGN_KEY: process.env.ACCESS_TOKEN_KEY,
+            REFRESH_TOKEN_SIGN_KEY: process.env.REFRESH_TOKEN_KEY
         },
         bcrypt: {
             saltRounds: 10
