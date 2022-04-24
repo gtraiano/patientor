@@ -2,7 +2,7 @@ import axios from 'axios';
 import { apiBaseUrl } from '../constants';
 
 axios.defaults.baseURL = apiBaseUrl;
-axios.defaults.withCredentials = false;
+axios.defaults.withCredentials = true;
 
 export const setAuthToken = (token: string | null | undefined) => {
     axios.defaults.headers.common = { 'Authorization': `Bearer ${token || ''}` };

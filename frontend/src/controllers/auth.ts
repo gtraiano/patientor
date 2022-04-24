@@ -17,7 +17,6 @@ export const loginUser = async (username: string, password: string): Promise<Aut
     const response = await axios.post<string>(
         '/auth',
         { username, password },
-        //{ withCredentials: true }
     );
     const accessToken = decodeAccessToken(response.data);
     setAuthToken(accessToken?.token);

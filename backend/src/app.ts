@@ -21,7 +21,10 @@ app.use(`${config.routes.api.root}${config.routes.api.ping}`, ping);
 
 // middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 app.use(cookieParser());
 app.use(decodeAccessToken);
 app.use(verifyRefreshToken);
