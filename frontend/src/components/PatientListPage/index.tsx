@@ -1,6 +1,6 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import axios from "../../controllers";
-import { Container, Table, Button, Icon, Input } from "semantic-ui-react";
+import { Container, TableCell, Button, Icon, Input } from "semantic-ui-react";
 
 import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
 import AddPatientModal from "../AddPatientModal";
@@ -10,6 +10,8 @@ import HealthRatingBar from "../../components/HealthRatingBar";
 import { useStateValue } from "../../state";
 import { Link } from "react-router-dom";
 import { addPatient } from "../../state/actions/patients";
+
+import SortableTable from "../SortableTable";
 
 const PatientListPage = () => {
   const [{ patients }, dispatch] = useStateValue();
@@ -40,6 +42,23 @@ const PatientListPage = () => {
         setError(e.response?.data?.error as string || 'Unknown error');
       }
     }
+  };
+
+  const sortFunc = (key: keyof Patient|undefined, order: boolean|undefined): (a: Patient|any, b: Patient|any) => number => {
+    return (a, b): number => {
+      if(key === undefined) return 0;
+      if(!a[key] || !b[key]) return 0;
+
+      if(typeof a[key] === 'string') return (a[key] as string).localeCompare(b[key], 'en', { sensitivity: 'base' }) * (order ? 1 : -1);
+      if(typeof a[key] === 'number') return ((a[key] as number) - (b[key] as number)) * (order ? 1 : -1);
+
+      if(((a[key] as ReactElement) as any).type?.name === 'Link' || ((a[key] as ReactElement) as any).type?.displayName === 'Link')
+          return ((a[key] as ReactElement).props.children as string).localeCompare((b[key] as ReactElement).props.children as string, 'en', { sensitivity: 'base' }) * (order ? 1 : -1);
+      if(((a[key] as ReactElement) as any).type?.name === 'TableCell' || ((a[key] as ReactElement) as any).type?.displayName === 'TableCell')
+          return ((a[key] as ReactElement).props.children.props.rating - (b[key] as ReactElement).props.children.props.rating) * (order ? 1 : -1);
+
+      return 0;
+    };
   };
 
   return (
@@ -75,28 +94,26 @@ const PatientListPage = () => {
         </div>
       </div>
 
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>Gender</Table.HeaderCell>
-            <Table.HeaderCell>Occupation</Table.HeaderCell>
-            <Table.HeaderCell>Health Rating</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {Object.values(patients).filter(p => new RegExp(filter.value, 'i').test(p.name)).map((patient: Patient) => (
-            <Table.Row key={patient.id}>
-              <Table.Cell><Link to={`/patients/${patient.id}`}>{patient.name}</Link></Table.Cell>
-              <Table.Cell>{patient.gender}</Table.Cell>
-              <Table.Cell>{patient.occupation}</Table.Cell>
-              <Table.Cell title={HealthCheckRating[patient.healthRating].replace(/([a-z])([A-Z])/g, '$1 $2')}>
-                <HealthRatingBar showText={false} rating={patient.healthRating}/>
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table>
+      <SortableTable<Patient>
+        data={Object.values(patients)
+          .filter(p => new RegExp(filter.value, 'i').test(p.name))
+          .map(p => ({
+            ...p,
+            name: <Link to={`/patients/${p.id}`}>{p.name}</Link>,
+            healthRating:
+              <TableCell title={HealthCheckRating[p.healthRating].replace(/([a-z])([A-Z])/g, '$1 $2')}>
+                <HealthRatingBar showText={false} rating={p.healthRating}/>
+              </TableCell>
+          }))
+        }
+        header={[
+          { key: 'name', sortable: true },
+          { key: 'gender', sortable: false },
+          { key: 'occupation', sortable: true },
+          { key: 'healthRating', sortable: true, alias: 'Health Rating' },
+        ]}
+        sortFunc={sortFunc}
+      />
 
       <AddPatientModal
         modalOpen={modalOpen}
