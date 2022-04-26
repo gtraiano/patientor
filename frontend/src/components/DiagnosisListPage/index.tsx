@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../controllers";
-import { Container, Table, Button, Icon, Confirm, ConfirmProps } from "semantic-ui-react";
+import { Container, Button, Confirm, ConfirmProps } from "semantic-ui-react";
 
 import { DiagnosisFormValues } from "../AddDiagnosisModal/AddDiagnosisForm";
 import AddDiagnosisModal from "../AddDiagnosisModal";
 import { Diagnosis } from "../../types/types";
-import { Action } from '../../types/Action';
 import { apiBaseUrl } from "../../constants";
 import { useStateValue } from '../../state';
 import { addDiagnosis, removeDiagnosis, setDiagnosisList } from "../../state/actions/diagnoses";
 
-interface DiagnosisAction extends Action {
-  callback: (code: string) => void;
-}
+import SortableTable, { GenericAction } from '../SortableTable';
 
 const DiagnosisListPage = () => {
   const [{ diagnoses }, dispatch] = useStateValue();
@@ -21,10 +18,11 @@ const DiagnosisListPage = () => {
   const [error, setError] = React.useState<string | undefined>();
   const [modalInitialValues, setModalInitialValues] = React.useState<Diagnosis | undefined>(); // intitial values to pass on edit
 
-  const actions: DiagnosisAction[] = [ // actions for diagnosis
-    { label: 'edit', iconName: 'edit', callback: code => void loadValuesToModal(code) },
+  const actions: GenericAction<Diagnosis>[] = [ // actions for diagnosis
+    { label: 'edit', iconName: 'edit', arg: 'code', callback: code => void loadValuesToModal(code) },
     { label: 'delete', iconName: 'trash',
-      callback: (code) => openConfirm(
+      arg: 'code',
+      callback: (code: string) => openConfirm(
         `Delete diagnosis ${code} ${diagnoses[code].name}?`,
         () => {
           void deleteDiagnosis(code);
@@ -83,10 +81,8 @@ const DiagnosisListPage = () => {
 
   const deleteDiagnosis = async (code: string) => {
     try {
-      //if(window.confirm(`Delete diagnosis ${code} ${diagnoses[code].name}?`)) {
         await axios.delete<void>(`${apiBaseUrl}/diagnoses/${code}`);
         dispatch(removeDiagnosis(code));
-      //}
       closeModal();
     }
     catch(e) {
@@ -100,6 +96,16 @@ const DiagnosisListPage = () => {
   const loadValuesToModal = (code: string) => {
     setModalInitialValues(diagnoses[code]);
     openModal();
+  };
+
+  const sortFunc = (key: keyof Diagnosis|undefined, order: boolean|undefined): (a: Diagnosis, b: Diagnosis) => number => {
+    return (a: Diagnosis, b: Diagnosis): number => {
+      if(key === undefined) return 0;
+      if(!a[key] || !b[key]) return 0;
+      return typeof a[key] === 'string'
+        ? (a[key] as string).localeCompare(b[key] as string, 'en', { sensitivity: 'base' }) * (order ? 1 : -1)
+        : (a[key] as string).localeCompare(b[key] as string, 'en', { numeric: true }) * (order ? 1 : -1);
+    };
   };
 
   useEffect(() => {
@@ -125,44 +131,21 @@ const DiagnosisListPage = () => {
       </Container>
 
       <div style={{ maxHeight: '75vh', overflowY: 'auto', margin: '1em 0' }}>
-        <Table celled>
-            <Table.Header className='sticky-header'>
-              <Table.Row>
-                  <Table.HeaderCell>Code</Table.HeaderCell>
-                  <Table.HeaderCell>Name</Table.HeaderCell>
-                  <Table.HeaderCell>Latin</Table.HeaderCell>
-                  <Table.HeaderCell>Actions</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-            {Object.values(diagnoses).map((diagnosis: Diagnosis) => (
-                <Table.Row key={diagnosis.code}>
-                  <Table.Cell>{diagnosis.code}</Table.Cell>
-                  <Table.Cell>{diagnosis.name}</Table.Cell>
-                  <Table.Cell>{diagnosis?.latin}</Table.Cell>
-                  <Table.Cell singleLine>
-                    <div>
-                    {actions.map(a =>
-                      <div
-                        key={`${diagnosis.code}_action_${a.label}`}
-                        style={{ display: 'inline-block', cursor: 'pointer' }}
-                        onClick={() => { a.callback(diagnosis.code); }}
-                      >
-                        <Icon name={a.iconName} title={a.label}/>
-                      </div>
-                    )}
-                    </div>
-                  </Table.Cell>
-                </Table.Row>
-            ))}
-            </Table.Body>
-        </Table>
+          <SortableTable<Diagnosis>
+              data={Object.values(diagnoses).map(d => d)}
+              header={[
+                {key: 'code', sortable: true },
+                {key: 'name', sortable: true},
+                {key: 'latin', sortable: false}
+              ]}
+              sortFunc={sortFunc}
+              actions={actions.map(a => ({ ...a, arg: 'code' }))}
+          />
       </div>
 
       <AddDiagnosisModal
         modalOpen={modalOpen}
-        onSubmit={submitDiagnosis/*modalInitialValues === undefined ? submitDiagnosis : updateDiagnosis*/}
+        onSubmit={submitDiagnosis}
         error={error}
         onClose={closeModal}
         initialValues={modalInitialValues}
