@@ -1,6 +1,6 @@
 // knowledge on React generic components from https://stackoverflow.com/a/66052574
 
-import React, { SyntheticEvent } from "react";
+import React, { ReactElement, SyntheticEvent } from "react";
 import { Icon, Table } from "semantic-ui-react";
 import { Action } from "../../types/Action";
 
@@ -10,11 +10,14 @@ export interface GenericAction<T> extends Action {
 }
 
 interface GenericProps<T> {
-    data: Array<T>,         // dataset
-    header: Array<{         // table fields
-        key: keyof T,       // object key corresponding to field
-        sortable: boolean,  // field is sortable
-        alias?: string      // string to display in table header (default is key name with first character capitalised)
+    data: Array<
+        T |
+        { [key in keyof T]: any }
+    >,                              // dataset
+    header: Array<{                 // table fields
+        key: keyof T,               // object key corresponding to field
+        sortable: boolean,          // field is sortable
+        alias?: string              // string to display in table header (default is key name with first character capitalised)
     }>,
     sortFunc: (key: keyof T|undefined, order: boolean|undefined) => (a: T, b: T) => number, // sort function
     actions?: Array<GenericAction<T>>,  // row actions (edit, delete, etc...)
@@ -32,6 +35,10 @@ const SortableTable = <T,>({ data, header, sortFunc, actions }: GenericProps<T>)
             e.preventDefault();
             setSortBy({ key: undefined, order: undefined });
         }
+    };
+
+    const isTableCell = (el: any) => {
+        return el ? (el as ReactElement).props?.as === 'td' : false;
     };
 
     if(!data || !data.length) return null;
@@ -66,7 +73,10 @@ const SortableTable = <T,>({ data, header, sortFunc, actions }: GenericProps<T>)
                 .map(el => el).sort(sortFunc(sortBy.key, sortBy.order)) // sort copy of dataset so that we can revert back to the original dataset
                 .map((el, i) => (
                     <Table.Row key={`row_${i}`}>
-                        {header.map(({ key }, j) => <Table.Cell key={`cell_${i}${j}`}>{el[key] ?? ''}</Table.Cell>)}
+                        {header.map(({ key }, j) => isTableCell(el[key])
+                            ? {...el[key], ...(!(el[key] as ReactElement).key && { key : `cell_${i}${j}` /* add element key if missing*/})}
+                            : <Table.Cell key={`cell_${i}${j}`}>{el[key] ?? ''}</Table.Cell>
+                        )}
                         {actions?.length &&
                         <Table.Cell singleLine>
                             <div>
