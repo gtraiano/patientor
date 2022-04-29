@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import path from 'path';
 dotenv.config();
 
 const refreshTokenOptions = {
@@ -24,7 +25,8 @@ export default {
     },
     app: {
         PORT: process.env.PORT || 3001,
-        HOST: process.env.HOST || 'localhost'
+        HOST: process.env.HOST || 'localhost',
+        SERVE_STATIC: process.env.SERVE_STATIC && path.resolve(__dirname, process.env.SERVE_STATIC as string)
     },
     routes: {
         api: {

@@ -17,6 +17,9 @@ import config from './config';
 const app = express();
 
 // no middleware involved
+if(config.app.SERVE_STATIC !== undefined) {
+    app.use('/', express.static(config.app.SERVE_STATIC));
+}
 app.use(`${config.routes.api.root}${config.routes.api.ping}`, ping);
 
 // middlewares
