@@ -25,7 +25,8 @@ A self-signed certificate will suffice for development purposes.
 
 |Variable |Function|
 |--------------|-----------|
-|REACT_APP_BACKEND_API_URL|backend server API URL|
+|BACKEND_API_URL|backend server API URL (excluding port)|
+|PORT|backend server listening port|
 |HTTPS|run development server in [HTTPS](https://create-react-app.dev/docs/using-https-in-development/#custom-ssl-certificate)|
 
 
