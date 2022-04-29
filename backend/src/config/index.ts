@@ -23,7 +23,8 @@ export default {
         name: 'accessToken'
     },
     app: {
-        PORT: process.env.PORT || 3001
+        PORT: process.env.PORT || 3001,
+        HOST: process.env.HOST || 'localhost'
     },
     routes: {
         api: {

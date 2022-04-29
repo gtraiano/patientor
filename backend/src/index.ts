@@ -9,8 +9,8 @@ const httpsServer = https.createServer({
     cert: fs.readFileSync(config.security.https.SSL_CRT_FILE as string),
 }, app);
 
-httpsServer.listen(config.app.PORT, () => {
-    console.log(`Server running on port ${config.app.PORT}`);
+httpsServer.listen({ port: config.app.PORT, host: config.app.HOST }, () => {
+    console.log(`Server running on port https://${config.app.HOST}:${config.app.PORT}`);
     connectToDB().catch(err => console.log(err.message));
 });
 

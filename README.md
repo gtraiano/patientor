@@ -11,9 +11,10 @@ A self-signed certificate will suffice for development purposes.
 
 ### *Environment variables*
 #### **Backend**
-|Variable |Function |
-|---------|---------|
-|PORT|backend server listening port|
+|Variable |Function |Default Value|
+|---------|---------|--------|
+|PORT|backend server listening port|`3001`|
+|HOST|backend server host|`localhost`|
 |MONGODB_URI|MongoDB URI|
 |ACCESS_TOKEN_KEY|access token signing key|
 |REFRESH_TOKEN_KEY|refresh token signing key|
