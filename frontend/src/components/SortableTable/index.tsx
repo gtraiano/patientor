@@ -38,7 +38,9 @@ const SortableTable = <T,>({ data, header, sortFunc, actions }: GenericProps<T>)
     };
 
     const isTableCell = (el: any) => {
-        return el ? (el as ReactElement).props?.as === 'td' : false;
+        return el
+            ? ((el as ReactElement) as any).type?.name === 'TableCell' || ((el as ReactElement) as any).type?.displayName === 'TableCell' || (el as ReactElement).props?.as === 'td'
+            : false;
     };
 
     if(!data || !data.length) return null;
