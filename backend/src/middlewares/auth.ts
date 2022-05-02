@@ -15,8 +15,10 @@ const getAccessToken = (request: Request): string | null => {
 }
 
 const decodeAccessToken = async (req: Request, _res: Response, next: NextFunction) => {
-    // must not be executed on POST /api/auth
-    if(req.path === `${config.routes.api.root}${config.routes.api.auth}` && req.method === 'POST') return next();
+    // must not be executed on POST /api/auth or POST /api/users
+    if(
+        req.path === `${config.routes.api.root}${config.routes.api.auth}` && req.method === 'POST' || 
+        req.path === `${config.routes.api.root}${config.routes.api.users}` && req.method === 'POST') return next();
     try {
         const token = getAccessToken(req);
         const decodedToken = jwt.verify(token as string, config.security.keys.ACCESS_TOKEN_SIGN_KEY as string) as DecodedAccessToken;
