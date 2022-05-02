@@ -2,6 +2,8 @@
 
 My solution for Full Stack Open 2021 course's [patientor](https://fullstackopen.com/en/part9/react_with_types/).
 
+Live demo [here](https://patienttor.herokuapp.com/).
+
 
 ## Setup
 ### *SSL certificate*
@@ -25,8 +27,8 @@ A self-signed certificate will suffice for development purposes.
 
 |Variable |Function|
 |--------------|-----------|
-|BACKEND_API_URL|backend server API URL (excluding port)|
-|PORT|backend server listening port|
+|REACT_APP_BACKEND_API_URL|backend server API URL (excluding port)|
+|REACT_APP_BACKEND_SERVER_PORT|backend server listening port|
 |HTTPS|run development server in [HTTPS](https://create-react-app.dev/docs/using-https-in-development/#custom-ssl-certificate)|
 
 
