@@ -30,7 +30,7 @@ const PatientListPage = () => {
   const submitNewPatient = async (values: PatientFormValues) => {
     try {
       const { data: newPatient } = await axios.post<Patient>(
-        `${apiBaseUrl}/patients`,
+        `${apiBaseUrl as string}/patients`,
         values
       );
       dispatch(addPatient(newPatient));
@@ -45,17 +45,28 @@ const PatientListPage = () => {
   };
 
   const sortFunc = (key: keyof Patient|undefined, order: boolean|undefined): (a: Patient|any, b: Patient|any) => number => {
+    const TableCellType = (<TableCell/> as ReactElement as any)?.type?.name as string || (<TableCell/> as ReactElement as any)?.type?.displayName as string;
+    const LinkType = (<Link to="" /> as ReactElement as any)?.type?.name as string || (<Link to=""/> as ReactElement as any)?.type?.displayName as string;
+    const HealthRatingBarType = (<HealthRatingBar rating={0} showText={false}/> as ReactElement as any)?.type?.name as string || (<HealthRatingBar rating={0} showText={false}/> as ReactElement as any)?.type?.displayName as string;
+    
     return (a, b): number => {
       if(key === undefined) return 0;
       if(!a[key] || !b[key]) return 0;
 
+      // primitive types comparison
       if(typeof a[key] === 'string') return (a[key] as string).localeCompare(b[key], 'en', { sensitivity: 'base' }) * (order ? 1 : -1);
       if(typeof a[key] === 'number') return ((a[key] as number) - (b[key] as number)) * (order ? 1 : -1);
 
-      if(((a[key] as ReactElement) as any).type?.name === 'Link' || ((a[key] as ReactElement) as any).type?.displayName === 'Link')
+      // react components comparison
+      // Link
+      if(((a[key] as ReactElement as any)?.type?.name || (a[key] as ReactElement as any)?.type?.displayName) === LinkType){
           return ((a[key] as ReactElement).props.children as string).localeCompare((b[key] as ReactElement).props.children as string, 'en', { sensitivity: 'base' }) * (order ? 1 : -1);
-      if(((a[key] as ReactElement) as any).type?.name === 'TableCell' || ((a[key] as ReactElement) as any).type?.displayName === 'TableCell')
-          return ((a[key] as ReactElement).props.children.props.rating - (b[key] as ReactElement).props.children.props.rating) * (order ? 1 : -1);
+      }
+      // TableCell -> HealthBarRating
+      if(((a[key] as ReactElement as any)?.type?.name || (a[key] as ReactElement as any)?.type?.displayName) === TableCellType) {
+        if((a[key]?.props?.children?.type?.name || a[key]?.props?.children?.type?.displayName) === HealthRatingBarType)
+            return ((a[key] as ReactElement).props.children.props.rating - (b[key] as ReactElement).props.children.props.rating) * (order ? 1 : -1);
+      }
 
       return 0;
     };
