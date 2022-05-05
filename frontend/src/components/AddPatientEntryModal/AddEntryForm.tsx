@@ -5,9 +5,8 @@ import { TextField, DateField, SelectEntryType, SelectDiagnosis } from '../FormF
 import { Diagnosis, EntryType, Discharge, HealthCheckRating, SickLeave } from '../../types/types';
 import { Button, DropdownOnSearchChangeData } from 'semantic-ui-react';
 import AddDiagnosisModal from '../AddDiagnosisModal';
-import axios from '../../controllers';
-import { apiBaseUrl } from '../../constants';
-import { addDiagnosis } from '../../state/actions/diagnoses';
+import axios, { postDiagnosis } from '../../controllers';
+import { addDiagnosis } from '../../state/actions';
 import { SelectHealthRating } from '../FormFields/SelectHealthRating';
 
 export type EntryFormValues = {
@@ -41,8 +40,8 @@ const AddEntryForm = ({ onSubmit, onCancel, initialValues }: Props) => {
 
     const onSubmitDiagnosis = async (diagnosis: Diagnosis) => {
         try {
-            const res = await axios.post<Diagnosis>(`${apiBaseUrl}/diagnoses`, diagnosis);
-            dispatch(addDiagnosis(res.data));
+            const res = await postDiagnosis(diagnosis);
+            dispatch(addDiagnosis(res));
             setSearchModalOpen(false);
         }
         catch(error) {

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "../../controllers";
+import axios, { deletePatient, deletePatientEntry, postPatientEntry, putPatient, putPatientEntry } from "../../controllers";
 import { useParams } from "react-router";
 import { useStateValue } from "../../state";
 import { Gender, Patient, EntryType, Entry } from "../../types/types";
-import { apiBaseUrl } from "../../constants";
 import { Button, CardGroup, Confirm, ConfirmProps, DropdownProps, Icon, Loader, Select, Table } from "semantic-ui-react";
 import PatientEntryCard, { EntryAction } from "../PatientEntryCard";
 import AddPatientEntry from "../AddPatientEntryModal";
@@ -12,11 +11,12 @@ import { Action } from "../../types/Action";
 import AddPatientModal from "../AddPatientModal";
 import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
 import { useHistory } from "react-router-dom";
+import { addPatient, removePatient } from "../../state/actions";
+import { getPatient } from "../../controllers";
+import HealthRatingBar from "../HealthRatingBar";
 
 import '../../styles/general.css';
-import { addPatient, removePatient } from "../../state/actions/patients";
-import { fetchPatient } from "../../controllers";
-import HealthRatingBar from "../HealthRatingBar";
+
 
 interface PatientAction extends Action {
     callback: (patient: Patient) => void
@@ -161,13 +161,13 @@ const PatientInfo = () => {
         try {
             let response;
             if(initialValues && values?.id) { // edit existing entry
-                response = await axios.put<Patient>(`${apiBaseUrl}/patients/${patientId}/entries/${values.id}`, { id: values.id, ...newEntry });
+                response = await putPatientEntry(patientId, values.id, newEntry);
             }
             else { // post new entry
-                response = await axios.post<Patient>(`${apiBaseUrl}/patients/${patientId}/entries`, newEntry);
+                response = await postPatientEntry(patientId, newEntry);
                 
             }
-            dispatch(addPatient(response.data));
+            dispatch(addPatient(response));
             closeEntryModal();
             //history.back();
         }
@@ -187,7 +187,8 @@ const PatientInfo = () => {
     const onDeleteEntry = async (entry: Entry) => {
         if(!patientId) return;
         try {
-            const { data: patient } = await axios.delete<Patient>(`${apiBaseUrl}/patients/${patientId}/entries/${entry.id}`);
+            //const { data: patient } = await axios.delete<Patient>(`${apiBaseUrl}/patients/${patientId}/entries/${entry.id}`);
+            const patient = await deletePatientEntry(patientId, entry.id);
             dispatch(addPatient(patient));
         }
         catch(error) {
@@ -198,10 +199,7 @@ const PatientInfo = () => {
     const onSubmitPatient = async (patient: PatientFormValues) => {
         if(!patientId) return;
         try {
-            const { data: submittedPatient } = await axios.put<Patient>(
-                `${apiBaseUrl}/patients/${patientId}`,
-                Object.fromEntries(Object.entries(patient).filter(([key,]) => !['id', 'entries'].includes(key)))
-            );
+            const submittedPatient = await putPatient(patientId, patient);
             dispatch(addPatient(submittedPatient));
             closePatientModal();
         }
@@ -220,7 +218,7 @@ const PatientInfo = () => {
 
     const onDeletePatient = async (id: string) => {
         try {
-            await axios.delete(`${apiBaseUrl}/patients/${id}`);
+            await deletePatient(id);
             dispatch(removePatient(id));
         }
         catch(error: unknown) {
@@ -234,7 +232,7 @@ const PatientInfo = () => {
     useEffect(() => {
         if(patientId && (!patients[patientId] || !patients[patientId].entries)) {
             setFetching(true);
-            void fetchPatient(patientId)
+            void getPatient(patientId)
                 .then(data => {
                     dispatch(addPatient(data as Patient));
                 })

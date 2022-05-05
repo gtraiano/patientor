@@ -1,17 +1,20 @@
 import React, { ReactElement } from "react";
-import axios from "../../controllers";
-import { Container, TableCell, Button, Icon, Input } from "semantic-ui-react";
 
+import axios, { postPatient } from "../../controllers";
+import { useStateValue } from "../../state";
+
+import { HealthCheckRating, Patient } from "../../types/types";
+import { Container, TableCell, Button, Icon, Input } from "semantic-ui-react";
 import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
 import AddPatientModal from "../AddPatientModal";
-import { HealthCheckRating, Patient } from "../../types/types";
-import { apiBaseUrl } from "../../constants";
 import HealthRatingBar from "../../components/HealthRatingBar";
-import { useStateValue } from "../../state";
 import { Link } from "react-router-dom";
-import { addPatient } from "../../state/actions/patients";
+import { addPatient } from "../../state/actions";
 
 import SortableTable from "../SortableTable";
+
+// Link component does not have name defined!
+Link.name === undefined && Object.assign(Link, { name: 'Link' });
 
 const PatientListPage = () => {
   const [{ patients }, dispatch] = useStateValue();
@@ -29,11 +32,8 @@ const PatientListPage = () => {
 
   const submitNewPatient = async (values: PatientFormValues) => {
     try {
-      const { data: newPatient } = await axios.post<Patient>(
-        `${apiBaseUrl as string}/patients`,
-        values
-      );
-      dispatch(addPatient(newPatient));
+      const data = await postPatient(values);
+      dispatch(addPatient(data));
       closeModal();
     }
     catch(e) {
@@ -45,9 +45,9 @@ const PatientListPage = () => {
   };
 
   const sortFunc = (key: keyof Patient|undefined, order: boolean|undefined): (a: Patient|any, b: Patient|any) => number => {
-    const TableCellType = (<TableCell/> as ReactElement as any)?.type?.name as string || (<TableCell/> as ReactElement as any)?.type?.displayName as string;
-    const LinkType = (<Link to="" /> as ReactElement as any)?.type?.name as string || (<Link to=""/> as ReactElement as any)?.type?.displayName as string;
-    const HealthRatingBarType = (<HealthRatingBar rating={0} showText={false}/> as ReactElement as any)?.type?.name as string || (<HealthRatingBar rating={0} showText={false}/> as ReactElement as any)?.type?.displayName as string;
+    const TableCellType = TableCell.name;
+    const HealthRatingBarType = HealthRatingBar.name;
+    const LinkType = Link.name;
     
     return (a, b): number => {
       if(key === undefined) return 0;

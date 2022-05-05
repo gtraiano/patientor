@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import axios from "../../controllers";
-import { Container, Button, Confirm, ConfirmProps } from "semantic-ui-react";
 
-import { DiagnosisFormValues } from "../AddDiagnosisModal/AddDiagnosisForm";
-import AddDiagnosisModal from "../AddDiagnosisModal";
+import axios, { getDiagnoses, postDiagnosis, putDiagnosis } from "../../controllers";
 import { Diagnosis } from "../../types/types";
-import { apiBaseUrl } from "../../constants";
 import { useStateValue } from '../../state';
-import { addDiagnosis, removeDiagnosis, setDiagnosisList } from "../../state/actions/diagnoses";
+import { addDiagnosis, removeDiagnosis, setDiagnosisList } from "../../state/actions";
 
+import { Container, Button, Confirm, ConfirmProps } from "semantic-ui-react";
+import AddDiagnosisModal from "../AddDiagnosisModal";
+import { DiagnosisFormValues } from "../AddDiagnosisModal/AddDiagnosisForm";
 import SortableTable, { GenericAction } from '../SortableTable';
 
 const DiagnosisListPage = () => {
@@ -65,10 +64,10 @@ const DiagnosisListPage = () => {
 
   const submitDiagnosis = async (values: DiagnosisFormValues) => {
     try {
-      const { data: newDiagnosis } = modalInitialValues === undefined
-        ? await axios.post<Diagnosis>(`${apiBaseUrl}/diagnoses`, values)
-        : await axios.put<Diagnosis>(`${apiBaseUrl}/diagnoses/${values.code}`, values);
-      dispatch(addDiagnosis(newDiagnosis));
+      const data = modalInitialValues === undefined
+        ? await postDiagnosis(values)
+        : await putDiagnosis(values.code, values);
+      dispatch(addDiagnosis(data));
       closeModal();
     }
     catch (e) {
@@ -81,7 +80,7 @@ const DiagnosisListPage = () => {
 
   const deleteDiagnosis = async (code: string) => {
     try {
-        await axios.delete<void>(`${apiBaseUrl}/diagnoses/${code}`);
+        await deleteDiagnosis(code);
         dispatch(removeDiagnosis(code));
       closeModal();
     }
@@ -111,8 +110,8 @@ const DiagnosisListPage = () => {
   useEffect(() => {
     const fetchDiagnosisList = async () => {
         try {
-          const { data: diagnosisListFromApi } = await axios.get<Diagnosis[]>(`${apiBaseUrl}/diagnoses`);
-          dispatch(setDiagnosisList(diagnosisListFromApi));
+          const data = await getDiagnoses();
+          dispatch(setDiagnosisList(data));
         }
         catch(error) {
           console.error(error);

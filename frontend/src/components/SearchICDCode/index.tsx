@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import axios from '../../controllers';
-import { apiBaseUrl } from '../../constants';
-import { Form, Segment, Label, SearchResults } from 'semantic-ui-react';
+
+import { postDiagnosis, postICDCLookup } from '../../controllers';
 import { useStateValue } from '../../state';
-import { Diagnosis } from '../../types/types';
+import { addDiagnosis } from '../../state/actions';
+
+import { Form, Segment, Label, SearchResults } from 'semantic-ui-react';
 import SearchResultsList from './SearchResultsList';
-import { addDiagnosis } from '../../state/actions/diagnoses';
+
 
 export interface SearchResults {
     terms: string | undefined,
@@ -66,10 +67,10 @@ const SearchICDCode = () => {
             document.getElementById('results-div')?.scrollTo(0, 0);
             try {
                 setFetching(true);
-                const { data: searchResultsFromApi } = await axios.post<SearchResults>(`${apiBaseUrl}/icdclookup`, { terms });
+                const data = await postICDCLookup(terms);
                 setFetching(false);
 
-                const extracted = extractResults(searchResultsFromApi);
+                const extracted = extractResults(data);
                 setResults({
                     ...extracted,
                     terms: extracted.terms || terms
@@ -93,7 +94,7 @@ const SearchICDCode = () => {
 
     const addToDiagnoses = async (diagnosis: { name: string, desc: string }, index: number) => {
         try {
-            await axios.post<Diagnosis>(`${apiBaseUrl}/diagnoses`, { code: diagnosis.name, name: diagnosis.desc });
+            await postDiagnosis({ code: diagnosis.name, name: diagnosis.desc });
             dispatch(addDiagnosis({ code: diagnosis.name, name: diagnosis.desc }));
             setAdded(added.map((a, i) => i !== index ? a : true));
         }

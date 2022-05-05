@@ -1,14 +1,13 @@
-import axios from '../controllers';
 import React, { useEffect } from 'react';
 import { Card, Icon, SemanticICONS, Table } from 'semantic-ui-react';
-import { apiBaseUrl } from '../constants';
 import { useStateValue } from '../state';
 import { Action } from '../types/Action';
-import { Diagnosis, Entry, EntryType, HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry } from '../types/types';
+import { Entry, EntryType, HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry } from '../types/types';
 import HealthRatingBar from './HealthRatingBar';
 
 import '../styles/general.css';
-import { addDiagnosis } from '../state/actions/diagnoses';
+import { addDiagnosis } from '../state/actions';
+import { getDiagnosis } from '../controllers';
 
 interface Props {
     entry: Entry,
@@ -159,13 +158,9 @@ const PatientEntryCard = ({ entry, actions }: Props) => {
         // fetch diagnosis info and add to state if necessary
         entry.diagnosisCodes?.forEach(code => {
             if(diagnoses[code] === undefined) {
-                void axios
-                    .get<Diagnosis>(`${apiBaseUrl}/diagnoses/${code}`)
-                    .then(response => {
-                        if(response.data) {
-                            dispatch(addDiagnosis(response.data));
-                        }
-                    })
+                getDiagnosis(code)
+                    .then(data => { data && dispatch(addDiagnosis(data)); })
+                    .catch()
                     .catch(error => {
                         console.log(error);
                     });

@@ -1,26 +1,34 @@
 import React, { useEffect } from "react";
-import axios, { setAuthToken } from './controllers';
+
+import axios, {
+  setAuthToken,
+  loginUser as authLogin,
+  logoutUser,
+  registerUser,
+  scheduleRefreshToken,
+  getPatients,
+  getDiagnoses
+} from './controllers';
+import { useStateValue } from "./state";
+import {
+  setPatientList,
+  setDiagnosisList,
+  loginUser, logoutUser as clearAuth,
+  addScheduled, removeScheduled, removeAllScheduled,
+  displayMessage, clearMessage
+} from "./state/actions";
+import { Auth, MessageVariation } from "./types/types";
+
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import { Button, Divider, Header, Container, Message } from "semantic-ui-react";
-
-import { apiBaseUrl } from "./constants";
-import { useStateValue } from "./state";
-import { setPatientList } from "./state/actions/patients";
-import { setDiagnosisList } from "./state/actions/diagnoses";
-import { loginUser, logoutUser as clearAuth } from "./state/actions/auth";
-import { addScheduled, removeScheduled, removeAllScheduled } from "./state/actions/scheduler";
-import { displayMessage, clearMessage } from "./state/actions/message";
-import { Auth, Diagnosis, MessageVariation } from "./types/types";
-
 import PatientListPage from "./components/PatientListPage";
 import PatientInfo from "./components/PatientInfoPage/PatientInfo";
 import DiagnosisListPage from "./components/DiagnosisListPage";
-
-import './styles/general.css';
-import { loginUser as authLogin, logoutUser, registerUser, scheduleRefreshToken } from "./controllers/auth";
 import AuthenticationForm, { AuthenticationFormValues } from "./components/AuthenticationPage";
 
-import { fetchPatients } from './controllers';
+import './styles/general.css';
+
+
 import UserInfo from "./components/UserInfo";
 
 const App = () => {
@@ -41,7 +49,7 @@ const App = () => {
     React.useEffect(() => {
         const fetchPatientList = async (): Promise<void> => {
             try {
-                dispatch(setPatientList(await fetchPatients()));
+                dispatch(setPatientList(await getPatients()));
             }
             catch(e) {
                 console.error(e);
@@ -49,10 +57,8 @@ const App = () => {
         };
         const fetchDiagnosisList = async (): Promise<void> => {
             try {
-                const { data: diagnosisListFromApi } = await axios.get<Diagnosis[]>(
-                  `${apiBaseUrl}/diagnoses`,
-                );
-                dispatch(setDiagnosisList(diagnosisListFromApi));
+                const data = await getDiagnoses();
+                dispatch(setDiagnosisList(data));
             }
             catch(error) {
                 console.error(error);
@@ -74,9 +80,6 @@ const App = () => {
                 // remove oldest scheduled task id
                 dispatch(removeScheduled());
             });
-            // save scheduled task id
-            //refreshHandler && dispatch(addScheduled(refreshHandler));
-            //console.log('refreshHandler', refreshHandler);
         }
         // on logout
         else {
