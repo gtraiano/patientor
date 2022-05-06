@@ -2,8 +2,8 @@ import express from 'express';
 
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { decodeAccessToken, verifyRefreshToken } from './middlewares/auth';
-import { isOperationAllowed } from './middlewares/permissions/permissions';
+import { decodeAccessToken, verifyRefreshToken } from './middlewares/auth/';
+import { isOperationAllowed } from './middlewares/permissions/';
 import errorMiddleware from './middlewares/error'
 
 import ping from './routes/ping';
