@@ -4,7 +4,7 @@ import RefreshToken from '../../models/RefreshToken';
 import authServices, { InvalidCredentials } from '../../services/auth';
 import config from '../../config';
 import { DecodedAccessToken } from '../../types';
-import { middlewareRules } from './rules';
+import { preventExecution, RequestMethod } from './rules';
 
 
 const getAccessToken = (request: Request): string | null => {
@@ -16,8 +16,8 @@ const getAccessToken = (request: Request): string | null => {
     return null;
 }
 
-const decodeAccessToken = async (req: Request, _res: Response, next: NextFunction) => {
-    if(middlewareRules.decodeAccessToken[req.method]?.find(r => r.path === req.path && r.match)) return next();
+async function decodeAccessToken(req: Request, _res: Response, next: NextFunction) {
+    if(preventExecution(decodeAccessToken.name, req.method as RequestMethod, req.path)) return next();
     try {
         const token = getAccessToken(req);
         const decodedToken = jwt.verify(token as string, config.security.keys.ACCESS_TOKEN_SIGN_KEY as string) as DecodedAccessToken;
@@ -42,11 +42,10 @@ const isUserLoggedIn = async (request: Request, _response: Response, next: NextF
     next();
 }
 
-const verifyRefreshToken = async (request: Request, _response: Response, next: NextFunction) => {
-    if(middlewareRules.decodeAccessToken[request.method]?.find(r => r.path === request.path && r.match)) return next();
+async function verifyRefreshToken(request: Request, _response: Response, next: NextFunction) {
+    if(preventExecution(verifyRefreshToken.name, request.method as RequestMethod, request.path)) return next();
     try {
         const refreshToken = request.cookies[config.refreshToken.cookie.name];
-        //console.log('read refresh token', refreshToken);
         // lookup in DB
         const retrieved = await RefreshToken.findOne({ token: refreshToken.token });
         if(!retrieved || retrieved.userId !== refreshToken.userId) {
