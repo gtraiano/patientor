@@ -4,20 +4,22 @@ import { decodeAccessToken, verifyRefreshToken } from "./auth";
 export type RequestMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | '*';
 // asterisk serves as a wildcard or as the remaining methods for which rules have not been set
 
-export interface Rule {
+export interface ExecutionPreventionRule {
     path: string | RegExp,  // request path
     prevent: boolean        // prevent execution
 }
 
-export type MethodRule = {
-    [key in RequestMethod as string]: Array<Rule>   // rules per request method
+// rules per request method
+export type RequestMethodExecutionPreventionRule = {
+    [key in RequestMethod]?: Array<ExecutionPreventionRule>
 }
 
-export interface MiddlewareRules {
-    [key: string]: MethodRule,  // set of rules per middleware function
+// set of rules per middleware function
+export interface MiddlewareExecutionPreventionRules {
+    [key: string]: RequestMethodExecutionPreventionRule,
 }
 
-export const middlewareRules: MiddlewareRules = {
+export const middlewareRules: MiddlewareExecutionPreventionRules = {
     [decodeAccessToken.name]: {
         // must NOT be executed on POST /api/auth or POST /api/users
         'POST': [
