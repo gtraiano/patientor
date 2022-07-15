@@ -38,7 +38,7 @@ export const isOperationAllowed = (req: Request, _res: Response, next: NextFunct
     // find method for route with request method and id as criteria
     const rule = rules.get(url.route || '')?.[req.method]?.find((r: any) => r.params === (url.id !== undefined));
     if(rule) {
-        console.log('has rules', url.route && rules.has(url.route), url.route && rules.get(url.route)?.[req.method].find((r: any) => r.params === (url.id !== undefined)));
+        console.log('has rules', url.route && rules.has(url.route), url.route && rules.get(url.route)?.[req.method]?.find((r: any) => r.params === (url.id !== undefined)));
         console.log('operation allowed', rule?.allow(user.roles, user.id, url.id));
         if(!rule?.allow(user.roles, user.id, url.id)) return next(new CustomError('operation is not allowed', 401));
     }
