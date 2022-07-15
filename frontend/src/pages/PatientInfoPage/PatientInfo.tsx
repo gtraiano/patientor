@@ -4,16 +4,16 @@ import { useParams } from "react-router";
 import { useStateValue } from "../../state";
 import { Gender, Patient, EntryType, Entry } from "../../types/types";
 import { Button, CardGroup, Confirm, ConfirmProps, DropdownProps, Icon, Loader, Select, Table } from "semantic-ui-react";
-import PatientEntryCard, { EntryAction } from "../PatientEntryCard";
-import AddPatientEntry from "../AddPatientEntryModal";
-import { EntryFormValues } from "../AddPatientEntryModal/AddEntryForm";
+import PatientEntryCard, { EntryAction } from "../../components/PatientEntryCard";
+import AddPatientEntry from "../../components/AddPatientEntryModal";
+import { EntryFormValues } from "../../components/AddPatientEntryModal/AddEntryForm";
 import { Action } from "../../types/Action";
-import AddPatientModal from "../AddPatientModal";
-import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
+import AddPatientModal from "../../components/AddPatientModal";
+import { PatientFormValues } from "../../components/AddPatientModal/AddPatientForm";
 import { useHistory } from "react-router-dom";
 import { addPatient, removePatient } from "../../state/actions";
 import { getPatient } from "../../controllers";
-import HealthRatingBar from "../HealthRatingBar";
+import HealthRatingBar from "../../components/HealthRatingBar";
 
 import '../../styles/general.css';
 

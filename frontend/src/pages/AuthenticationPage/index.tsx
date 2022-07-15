@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Grid, Button } from "semantic-ui-react";
 import { Field, Formik, Form, FormikProps } from "formik";
-import { TextField } from '../FormFields';
+import { TextField } from '../../components/FormFields';
 
 export type AuthenticationFormValues = {
     username: string,

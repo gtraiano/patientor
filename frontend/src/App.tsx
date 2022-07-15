@@ -21,15 +21,15 @@ import { Auth, MessageVariation } from "./types/types";
 
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import { Button, Divider, Header, Container, Message } from "semantic-ui-react";
-import PatientListPage from "./components/PatientListPage";
-import PatientInfo from "./components/PatientInfoPage/PatientInfo";
-import DiagnosisListPage from "./components/DiagnosisListPage";
-import AuthenticationForm, { AuthenticationFormValues } from "./components/AuthenticationPage";
+import PatientListPage from "./pages/PatientListPage";
+import PatientInfo from "./pages/PatientInfoPage/PatientInfo";
+import DiagnosisListPage from "./pages/DiagnosisListPage";
+import AuthenticationForm, { AuthenticationFormValues } from "./pages/AuthenticationPage";
 
 import './styles/general.css';
 
 
-import UserInfo from "./components/UserInfo";
+import UserInfo from "./pages/UserInfo";
 
 const App = () => {
     const [{ auth, scheduler, message }, dispatch] = useStateValue();

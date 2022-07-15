@@ -5,13 +5,13 @@ import { useStateValue } from "../../state";
 
 import { HealthCheckRating, Patient } from "../../types/types";
 import { Container, TableCell, Button, Icon, Input } from "semantic-ui-react";
-import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
-import AddPatientModal from "../AddPatientModal";
+import { PatientFormValues } from "../../components/AddPatientModal/AddPatientForm";
+import AddPatientModal from "../../components/AddPatientModal";
 import HealthRatingBar from "../../components/HealthRatingBar";
 import { Link } from "react-router-dom";
 import { addPatient } from "../../state/actions";
 
-import SortableTable from "../SortableTable";
+import SortableTable from "../../components/SortableTable";
 
 // Link component does not have name defined!
 Link.name === undefined && Object.assign(Link, { name: 'Link' });

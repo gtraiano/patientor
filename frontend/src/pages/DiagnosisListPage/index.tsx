@@ -6,9 +6,9 @@ import { useStateValue } from '../../state';
 import { addDiagnosis, removeDiagnosis, setDiagnosisList } from "../../state/actions";
 
 import { Container, Button, Confirm, ConfirmProps } from "semantic-ui-react";
-import AddDiagnosisModal from "../AddDiagnosisModal";
-import { DiagnosisFormValues } from "../AddDiagnosisModal/AddDiagnosisForm";
-import SortableTable, { GenericAction } from '../SortableTable';
+import AddDiagnosisModal from "../../components/AddDiagnosisModal";
+import { DiagnosisFormValues } from "../../components/AddDiagnosisModal/AddDiagnosisForm";
+import SortableTable, { GenericAction } from '../../components/SortableTable';
 
 const DiagnosisListPage = () => {
   const [{ diagnoses }, dispatch] = useStateValue();
