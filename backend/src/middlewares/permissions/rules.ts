@@ -2,13 +2,16 @@ import { UserRole, UserRoles } from "../../types";
 import { CustomError } from "../error";
 import config from '../../config';
 
+export type RequestMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | '*';
+// asterisk serves as a wildcard or as the remaining methods for which rules have not been set
+
 interface MethodRule {
     params: boolean,
     allow: (roles: UserRole[], sourceId: string, targetId?: string) => boolean
 }
 
-interface RouteRule {
-    [method: string]: MethodRule[]
+type RouteRule = {
+    [method in RequestMethod as string]?: MethodRule[]
 }
 
 const rules = new Map<string, RouteRule>();
