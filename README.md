@@ -17,13 +17,14 @@ A self-signed certificate will suffice for development purposes.
 |---------|---------|--------|
 |PORT|backend server listening port|`3001`|
 |HOST|backend server host|`localhost`|
+|PROTOCOLS|backend server(s) protocols (supported values are *HTTP* and *HTTPS*)|`HTTPS`|
 |MONGODB_URI|MongoDB URI|
 |ACCESS_TOKEN_KEY|access token signing key|
 |REFRESH_TOKEN_KEY|refresh token signing key|
 |SSL_CRT_FILE|SSL certificate file path|
 |SSL_KEY_FILE|SSL private key file path|
-|SSL_CRT|SSL certificate as string|__NOTE:__ enclose in quotes if multiline|
-|SSL_KEY|SSL private key as string|__NOTE:__ enclose in quotes if multiline|
+|SSL_CRT|SSL certificate as string|__NOTE:__ enclose in quotes if string is multiline|
+|SSL_KEY|SSL private key as string|__NOTE:__ enclose in quotes if string is multiline|
 
 #### **Frontend**
 
