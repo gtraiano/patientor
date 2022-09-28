@@ -24,9 +24,10 @@ export default {
         name: 'accessToken'
     },
     app: {
-        PORT: process.env.PORT || 3001,
+        PORT: Number.parseInt(process.env.PORT as string) || 3001,
         HOST: process.env.HOST || 'localhost',
-        SERVE_STATIC: process.env.SERVE_STATIC && path.resolve(__dirname, process.env.SERVE_STATIC as string)
+        SERVE_STATIC: process.env.SERVE_STATIC && path.resolve(__dirname, process.env.SERVE_STATIC as string),
+        PROTOCOLS: process.env.PROTOCOLS?.split(/\s*,\s*/)
     },
     routes: {
         api: {
