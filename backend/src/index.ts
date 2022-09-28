@@ -5,8 +5,8 @@ import https from 'https';
 import fs from 'fs';
 
 const httpsServer = https.createServer({
-    key: fs.readFileSync(config.security.https.SSL_KEY_FILE as string),
-    cert: fs.readFileSync(config.security.https.SSL_CRT_FILE as string),
+    key: config.security.https.SSL_KEY ?? fs.readFileSync(config.security.https.SSL_KEY_FILE as string),
+    cert: config.security.https.SSL_CRT ?? fs.readFileSync(config.security.https.SSL_CRT_FILE as string),
 }, app);
 
 httpsServer.listen({ port: config.app.PORT, host: config.app.HOST }, () => {

@@ -22,6 +22,8 @@ A self-signed certificate will suffice for development purposes.
 |REFRESH_TOKEN_KEY|refresh token signing key|
 |SSL_CRT_FILE|SSL certificate file path|
 |SSL_KEY_FILE|SSL private key file path|
+|SSL_CRT|SSL certificate as string|__NOTE:__ enclose in quotes if multiline|
+|SSL_KEY|SSL private key as string|__NOTE:__ enclose in quotes if multiline|
 
 #### **Frontend**
 

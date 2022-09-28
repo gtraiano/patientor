@@ -44,8 +44,12 @@ export default {
     },
     security: {
         https: { // ssl
+            // file paths
             SSL_CRT_FILE: process.env.SSL_CRT_FILE,
-            SSL_KEY_FILE: process.env.SSL_KEY_FILE
+            SSL_KEY_FILE: process.env.SSL_KEY_FILE,
+            // keys as strings
+            SSL_CRT: process.env.SSL_CRT,
+            SSL_KEY: process.env.SSL_KEY,
         },
         keys: { // token sign keys
             ACCESS_TOKEN_SIGN_KEY: process.env.ACCESS_TOKEN_KEY,
