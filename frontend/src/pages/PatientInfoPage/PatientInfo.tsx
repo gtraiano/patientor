@@ -348,7 +348,7 @@ const PatientInfo = () => {
                     
                 </div>
             </div>
-            <AddPatientEntry modalOpen={entryModalOpen} onSubmit={onSubmitEntry} onClose={closeEntryModal} initialValues={initialValues as EntryFormValues} />
+            <AddPatientEntry modalOpen={entryModalOpen} onSubmit={onSubmitEntry} onClose={closeEntryModal} error={error} initialValues={initialValues as EntryFormValues} />
             <AddPatientModal modalOpen={patientModalOpen} onSubmit={onSubmitPatient} onClose={closePatientModal} error={error} initialValues={initialValues as PatientFormValues} />
             <Confirm {...confirm} />
         </div>
