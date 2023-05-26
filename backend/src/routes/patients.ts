@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Router } from "express";
 import patientsService from '../services/patients';
-import { NewPatient, Patient } from "../types";
+import { Entry, NewEntry, NewPatient, Patient } from "../types";
 
 const patientsRouter: Router = Router();
 
@@ -52,7 +54,7 @@ patientsRouter.post('/', async (req, res) => {
 patientsRouter.post('/:id/entries', async (req, res) => {
     const entry = req.body;
     try {
-        res.json(await patientsService.addEntry(req.params.id, entry));
+        res.json(await patientsService.addEntry(req.params.id, entry as NewEntry));
     }
     catch(error: any) {
         res.status(400).json({ error: error.message });
@@ -61,7 +63,7 @@ patientsRouter.post('/:id/entries', async (req, res) => {
 
 patientsRouter.patch('/:id/entries/:entryId', async (req, res) => {
     try {
-        const entry = await patientsService.editEntry(req.params.id, req.params.entryId, req.body, req.method);
+        const entry = await patientsService.editEntry(req.params.id, req.params.entryId, req.body as Entry, req.method);
         res.json(entry);
     }
     catch(error: any) {

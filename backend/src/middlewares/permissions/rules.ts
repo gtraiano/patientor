@@ -12,7 +12,7 @@ interface MethodRule {
 
 type RouteRule = {
     [method in RequestMethod as string]?: MethodRule[]
-}
+};
 
 const rules = new Map<string, RouteRule>();
 // users route rules
@@ -137,6 +137,6 @@ rules.set(
             }
         ]
     }
-)
+);
 
 export default rules;

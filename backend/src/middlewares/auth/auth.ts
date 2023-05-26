@@ -14,9 +14,9 @@ const getAccessToken = (request: Request): string | null => {
         return authorization.substring(7);
     }
     return null;
-}
+};
 
-async function decodeAccessToken(req: Request, _res: Response, next: NextFunction) {
+function decodeAccessToken(req: Request, _res: Response, next: NextFunction) {
     if(preventExecution(decodeAccessToken.name, req.method as RequestMethod, req.path)) return next();
     try {
         const token = getAccessToken(req);
@@ -35,18 +35,21 @@ async function decodeAccessToken(req: Request, _res: Response, next: NextFunctio
 
 const isUserLoggedIn = async (request: Request, _response: Response, next: NextFunction) => {
     // logged in user should currently have a refresh token stored in db
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const loggedIn = await RefreshToken.findOne({ userId: (request as any)[config.accessToken.name].id });
     if(!loggedIn) {
         return next(new JsonWebTokenError('invalid token'));
     }
     next();
-}
+};
 
 async function verifyRefreshToken(request: Request, _response: Response, next: NextFunction) {
     if(preventExecution(verifyRefreshToken.name, request.method as RequestMethod, request.path)) return next();
     try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const refreshToken = request.cookies[config.refreshToken.cookie.name];
         // lookup in DB
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const retrieved = await RefreshToken.findOne({ token: refreshToken.token });
         if(!retrieved || retrieved.userId !== refreshToken.userId) {
             return next(new JsonWebTokenError('invalid refresh token'));
@@ -59,6 +62,7 @@ async function verifyRefreshToken(request: Request, _response: Response, next: N
             throw new TokenExpiredError('refresh token expired', new Date(request.cookies[config.refreshToken.cookie.name].expires*1000));
         }
         // verify against sign key
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         jwt.verify(refreshToken.token, config.security.keys.REFRESH_TOKEN_SIGN_KEY as string);
         
         console.log('refresh token is valid');

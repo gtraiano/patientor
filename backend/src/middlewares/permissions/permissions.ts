@@ -9,13 +9,13 @@ import { CustomError } from '../error';
  * @param depth path depth
  * @returns part of url path between [depth, depth + 1] number of forward slashes
  */
-const parseUrlPathId = (path: string, depth: number = 2): string | undefined => {
+const parseUrlPathId = (path: string, depth = 2): string | undefined => {
     return path.split('/')[depth + 1];
-}
+};
 
-const parseUrlPathRoute = (path: string, depth: number = 2): string | undefined => {
+const parseUrlPathRoute = (path: string, depth = 2): string | undefined => {
     return path.split('/').slice(0, depth + 1).join('/');
-}
+};
 
 const parseUrlPath = (path:string) : {
     route: string | undefined, id: string | undefined, secondaryId: string | undefined
@@ -31,7 +31,7 @@ export const isOperationAllowed = (req: Request, _res: Response, next: NextFunct
     // do not run on auth route
     if(req.path === `${config.routes.api.root}${config.routes.api.auth}`) return next();
     // user token
-    const user: DecodedAccessToken = (req as any)[config.accessToken.name];
+    const user: DecodedAccessToken = (req as any)[config.accessToken.name] as DecodedAccessToken;
     // request url route and id
     const url = parseUrlPath(req.path);
     

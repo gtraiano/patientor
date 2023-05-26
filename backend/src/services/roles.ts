@@ -15,11 +15,11 @@ const initializeRoles = async (): Promise<void> => {
             catch(error) {
                 console.log(error);
             }
-        };
+        }
         console.log(`Added roles ${addedRoles.join(', ')} to ${Role.modelName}`);
     }
-}
+};
 
 export default {
     initializeRoles
-}
+};

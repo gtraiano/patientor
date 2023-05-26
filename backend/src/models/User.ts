@@ -39,7 +39,7 @@ const UserSchema = new Schema<UserDoc>({
 
 UserSchema.set('toJSON', {
     transform: (_document, returnedObject) => {
-      returnedObject.id = returnedObject._id.toString();
+      returnedObject.id = returnedObject._id as string;
       delete returnedObject._id;
       delete returnedObject.__v;
       delete returnedObject.password;

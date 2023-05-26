@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { Diagnosis } from "../types"
+import { Diagnosis } from "../types";
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 const DiagnosisSchema = new Schema<Diagnosis>({
@@ -20,7 +20,7 @@ const DiagnosisSchema = new Schema<Diagnosis>({
 
 DiagnosisSchema.set('toJSON', {
     transform: (_document, returnedObject) => {
-      returnedObject.id = returnedObject._id.toString();
+      returnedObject.id = returnedObject._id as string;
       delete returnedObject._id;
       delete returnedObject.__v;
     }

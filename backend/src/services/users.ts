@@ -7,7 +7,7 @@ import config from "../config";
 
 const hashPassword = async (plainText: string, saltRounds: number = config.security.bcrypt.saltRounds): Promise<string> => {
     return await bcrypt.hash(plainText, saltRounds);
-}
+};
 
 const getUsers = async (): Promise<User[] | []> => await UserModel.find({}).populate('roles');
 
@@ -23,15 +23,15 @@ const createUser = async (userObj: NewUser): Promise<User> => {
         createdAt: Date.now()
     });
     return await (await user.save()).populate('roles');
-}
+};
 
 const removeUser = async (id: string) : Promise<void> => {
     await UserModel.findByIdAndDelete(id);
-}
+};
 
 export default {
     getUsers,
     getUser,
     createUser,
     removeUser
-}
+};

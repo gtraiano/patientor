@@ -20,7 +20,7 @@ export interface BaseEntry {
     date: string;
     specialist: string;
     diagnosisCodes?: Array<Diagnosis['code']>,
-    type: string
+    type: EntryType
 }
 
 export enum HealthCheckRating {
@@ -106,7 +106,7 @@ export interface User {
     roles: UserRole[]
 }
 
-export type NewUser = Omit<User, 'id' | 'createdAt'>
+export type NewUser = Omit<User, 'id' | 'createdAt'>;
 
 export interface AccessToken {
     token: string

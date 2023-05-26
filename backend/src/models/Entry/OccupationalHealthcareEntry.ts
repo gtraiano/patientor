@@ -1,27 +1,30 @@
-import { Schema, Document } from 'mongoose';
+import { Schema } from 'mongoose';
 import { EntryType, OccupationalHealthcareEntry } from '../../types';
-import BaseEntryModel, { options } from './BaseEntry';
+import BaseEntryModel, { BaseEntryDoc, options } from './BaseEntry';
 
-export interface OccupationalHealthcareEntryDoc extends OccupationalHealthcareEntry, Document {
-    id: string
-};
+export interface OccupationalHealthcareEntryDoc extends OccupationalHealthcareEntry, BaseEntryDoc {
+    id: string,
+    type: EntryType.OccupationalHealthcare
+}
 
-export const OccupationalHealthcareEntrySchema = new Schema<OccupationalHealthcareEntryDoc>({
-    employerName: {
-        type: String,
-        required: true
-    },
-    sickLeave: {
-        startDate: {
+export const OccupationalHealthcareEntrySchema = new Schema<OccupationalHealthcareEntryDoc>(
+    {
+        employerName: {
             type: String,
-            required: false
+            required: true
         },
-        endDate: {
-            type: String,
-            required: false
+        sickLeave: {
+            startDate: {
+                type: String,
+                required: false
+            },
+            endDate: {
+                type: String,
+                required: false
+            }
         }
-    }
-},
-options);
+    },
+    options
+);
 
 export default BaseEntryModel.discriminator<OccupationalHealthcareEntryDoc>(EntryType.OccupationalHealthcare, OccupationalHealthcareEntrySchema);

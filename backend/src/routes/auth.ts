@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import authService from '../services/auth';
 import { Router } from "express";
 import config from '../config';
+import { RefreshToken } from '../types';
 
 const authRouter: Router = Router();
 
@@ -24,7 +26,7 @@ authRouter.post('/', async (request, response) => {
             .send(accessToken);
     }
     catch(error: any) {
-        response.status(401).json({ error: error.message });
+        response.status(401).json({ error: (error as Error).message });
     }
 });
 
@@ -32,7 +34,7 @@ authRouter.delete('/', async (request, response) => {
 // on user logout
     try {
         // remove refresh token from db
-        const deleted = await authService.logoutUser(request.body.id);
+        const deleted = await authService.logoutUser(request.body.id as string);
         response
             .status(200)
             .clearCookie(
@@ -42,14 +44,14 @@ authRouter.delete('/', async (request, response) => {
             .end();
     }
     catch(error: any) {
-        response.status(500).json({ error: error.message });
+        response.status(500).json({ error: (error as Error).message });
     }
 });
 
 authRouter.put('/', async (request, response, next) => {
 // user asks for access token refresh
     try {
-        const refreshToken = request.cookies[config.refreshToken.cookie.name];
+        const refreshToken = request.cookies[config.refreshToken.cookie.name] as RefreshToken;
         //if(!refreshToken) return response.status(401).json({ error: 'invalid refresh token' });
         const accessToken = await authService.refreshAccessToken(refreshToken);
         response.status(200).send(accessToken);
@@ -58,6 +60,6 @@ authRouter.put('/', async (request, response, next) => {
         console.log('access token refresh error');
         return next(error);
     }
-})
+});
 
 export default authRouter;

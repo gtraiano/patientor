@@ -1,24 +1,26 @@
-import { Schema, Document } from 'mongoose';
+import { Schema } from 'mongoose';
 import { EntryType, HospitalEntry } from '../../types';
-import BaseEntryModel, { options } from './BaseEntry';
+import BaseEntryModel, { BaseEntryDoc, options } from './BaseEntry';
 
-export interface HospitalEntryDoc extends HospitalEntry, Document {
-    id: string
-};
+export interface HospitalEntryDoc extends HospitalEntry, BaseEntryDoc {
+    id: string,
+    type: EntryType.Hospital
+}
 
-export const HospitalEntrySchema: Schema = new Schema<HospitalEntryDoc>({
-    discharge: {
-        date: {
-            type: String,
-            required: true
-        },
-        criteria: {
-            type: String,
-            required: true
+export const HospitalEntrySchema: Schema = new Schema<HospitalEntryDoc>(
+    {
+        discharge: {
+            date: {
+                type: String,
+                required: true
+            },
+            criteria: {
+                type: String,
+                required: true
+            }
         }
-    }
-},
-options
+    },
+    options
 );
 
 export default BaseEntryModel.discriminator<HospitalEntryDoc>(EntryType.Hospital, HospitalEntrySchema);

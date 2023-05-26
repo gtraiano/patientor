@@ -7,30 +7,30 @@ import { RefreshToken as IRefreshToken } from '../types';
 import config from '../config';
 
 export class InvalidCredentials extends Error {
-    constructor(message: string = 'invalid username or password') {
+    constructor(message = 'invalid username or password') {
         super(message);
         this.name = "InvalidCredentials";
     }
 }
 
-const generateRefreshToken = async (userId: string, expires: Date): Promise<IRefreshToken> => {
+const generateRefreshToken = (userId: string, expires: Date): IRefreshToken => {
     return {
-        token: await jwt.sign(uid(config.security.tokens.refreshTokenLength), config.security.keys.REFRESH_TOKEN_SIGN_KEY as string),
+        token: jwt.sign(uid(config.security.tokens.refreshTokenLength), config.security.keys.REFRESH_TOKEN_SIGN_KEY as string),
         userId,
         expires
     };
-}
+};
 
 const saveRefreshToken = async (token: IRefreshToken) => {
     // save refresh token in db
     await RefreshToken.create(token);
-}
+};
 
 const loginUser = async (userObj: { username: string, password: string }) => {
     const user = await User.findOne({ username: userObj.username }).populate('roles');
     const passwordCorrect = user === null
         ? false
-        : await bcrypt.compare(userObj.password, user.password)
+        : await bcrypt.compare(userObj.password, user.password);
 
     if (!(user && passwordCorrect)) {
         throw new InvalidCredentials('invalid username or password');
@@ -39,15 +39,15 @@ const loginUser = async (userObj: { username: string, password: string }) => {
     // prepare access token payload
     const userForToken = {
         username: user.username,
-        id: user._id,
+        id: user._id as string,
         name: user.name,
         roles: user.roles.map(role => role.name as string)
-    }
+    };
     // generate access token
     const accessToken = jwt.sign(userForToken, process.env.ACCESS_TOKEN_KEY as string, { expiresIn: config.accessToken.expiresIn });
     
     // generate & save refresh token
-    const refreshToken = await generateRefreshToken(user.id, config.refreshToken.cookie.methods.expires());
+    const refreshToken = generateRefreshToken(user.id as string, config.refreshToken.cookie.methods.expires());
     try {
         await saveRefreshToken(refreshToken);
     }
@@ -56,7 +56,7 @@ const loginUser = async (userObj: { username: string, password: string }) => {
             // update refresh token with fresh toekn for given user id
             const updated = await RefreshToken.updateOne(
                 {
-                    userId: user.id
+                    userId: user.id as string
                 },
                 {
                     expires: refreshToken.expires,
@@ -72,11 +72,11 @@ const loginUser = async (userObj: { username: string, password: string }) => {
         accessToken,
         refreshToken
     };
-}
+};
 
 const logoutUser = async (userId: string) => {
     return await RefreshToken.findOneAndDelete({ userId });
-}
+};
 
 const refreshAccessToken = async (refreshToken: IRefreshToken) => {
     const retrieved = await RefreshToken.findOne({ token: refreshToken.token });
@@ -90,22 +90,22 @@ const refreshAccessToken = async (refreshToken: IRefreshToken) => {
     
     const userForToken = {
         username: user.username,
-        id: user._id,
+        id: user._id as string,
         name: user.name,
         roles: user.roles.map(role => role.name as string)
-    }
+    };
     // generate new access token
     const accessToken = jwt.sign(userForToken, config.security.keys.ACCESS_TOKEN_SIGN_KEY as string, { expiresIn: config.accessToken.expiresIn });
     return accessToken;
-}
+};
 
 const revokeRefreshToken = async (token: string): Promise<void> => {
     await RefreshToken.findOneAndDelete({ token });
-}
+};
 
 export default {
     loginUser,
     logoutUser,
     revokeRefreshToken,
     refreshAccessToken
-}
+};

@@ -12,7 +12,7 @@ export interface ExecutionPreventionRule {
 // rules per request method
 export type RequestMethodExecutionPreventionRule = {
     [key in RequestMethod]?: Array<ExecutionPreventionRule>
-}
+};
 
 // set of rules per middleware function
 export interface MiddlewareExecutionPreventionRules {

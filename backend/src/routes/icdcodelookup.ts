@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Router } from "express";
 import { AxiosError } from "axios";
 import ICDCService from '../services/icdcodelookup';
@@ -13,7 +15,7 @@ ICDCLookupRouter.post('/', async (req, res) => {
         res.json(data);
     }
     catch(error: any | AxiosError) {
-        res.status((error as AxiosError).isAxiosError ? error.response?.status || 400 : 400).json({ error: error.message });
+        res.status((error as AxiosError).isAxiosError ? error.response?.status || 400 : 400).json({ error: (error as Error).message });
     }
 });
 

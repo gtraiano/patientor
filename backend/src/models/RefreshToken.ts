@@ -21,7 +21,7 @@ const RefreshTokenSchema = new Schema<RefreshToken>({
 
 RefreshTokenSchema.set('toJSON', {
     transform: (_document, returnedObject) => {
-      returnedObject.id = returnedObject._id.toString();
+      returnedObject.id = returnedObject._id as string;
       delete returnedObject._id;
       delete returnedObject.__v;
     }

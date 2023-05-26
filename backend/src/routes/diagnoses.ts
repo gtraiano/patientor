@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Router } from "express";
 import diagnosesService from '../services/diagnoses';
+import { Diagnosis } from "../types";
 
 const diagnosesRouter: Router = Router();
 
@@ -18,17 +20,17 @@ diagnosesRouter.post('/', async (req, res) => {
         res.json(diagnosis);
     }
     catch(error: any) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error: (error as Error).message });
     }
-})
+});
 
 diagnosesRouter.put('/:code', async (req, res) => {
     try {
-        const diagnosis = await diagnosesService.editDiagnosis(req.body);
+        const diagnosis = await diagnosesService.editDiagnosis(req.body as Diagnosis);
         res.json(diagnosis);
     }
     catch(error: any) {
-        res.status(400).json({ error: error.message })
+        res.status(400).json({ error: (error as Error).message });
     }
 });
 
@@ -38,8 +40,8 @@ diagnosesRouter.delete('/:code', async (req, res) => {
         res.sendStatus(200);
     }
     catch(error: any) {
-        res.status(400).json({ error: error.message })
+        res.status(400).json({ error: (error as Error).message });
     }
-})
+});
 
 export default diagnosesRouter;

@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Router } from "express";
 import mongoose from "mongoose";
 import { CustomError } from "../middlewares/error";
 import usersService from '../services/users';
+import { NewUser } from "../types";
 
 const usersRouter: Router = Router();
 
@@ -26,18 +28,18 @@ usersRouter.delete('/:id', async (req, res) => {
         res.sendStatus(200);
     }
     catch(error: any) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error: (error as Error).message });
     }
 });
 
 usersRouter.post('/', async (req, res) => {
     try {
-        const user = await usersService.createUser(req.body);
+        const user = await usersService.createUser(req.body as NewUser);
         res.status(201).json(user);
 
     }
     catch(error: any) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error: (error as Error).message });
     }
 });
 
