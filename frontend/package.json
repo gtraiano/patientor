@@ -3,25 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "axios": "^0.26.0",
-    "formik": "^2.2.9",
+    "axios": "latest",
+    "formik": "latest",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
-    "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^2.0.3"
+    "semantic-ui-css": "latest",
+    "semantic-ui-react": "latest"
   },
   "devDependencies": {
-    "@types/jest": "26.0.20",
-    "@types/node": "12.11.7",
+    "@types/jest": "latest",
+    "@types/node": "latest",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
     "@types/react-router-dom": "^5.1.7",
-    "@typescript-eslint/eslint-plugin": "^5.5.0",
-    "@typescript-eslint/parser": "^5.5.0",
-    "eslint-config-react": "^1.1.7",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "eslint-config-react": "latest",
     "react-scripts": "^4.0.3",
-    "typescript": "^4.5.2"
+    "typescript": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
