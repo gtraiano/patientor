@@ -27,7 +27,7 @@ interface AnyObject {
 }
 
 interface Props {
-    onSubmit: (values: EntryFormValues) => void;
+    onSubmit: (values: EntryFormValues) => void | Promise<void>;
     onCancel: () => void;
     initialValues?: EntryFormValues;
 }

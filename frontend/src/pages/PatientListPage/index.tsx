@@ -54,7 +54,7 @@ const PatientListPage = () => {
       if(!a[key] || !b[key]) return 0;
 
       // primitive types comparison
-      if(typeof a[key] === 'string') return (a[key] as string).localeCompare(b[key], 'en', { sensitivity: 'base' }) * (order ? 1 : -1);
+      if(typeof a[key] === 'string') return (a[key] as string).localeCompare(b[key] as string, 'en', { sensitivity: 'base' }) * (order ? 1 : -1);
       if(typeof a[key] === 'number') return ((a[key] as number) - (b[key] as number)) * (order ? 1 : -1);
 
       // react components comparison

@@ -7,7 +7,7 @@ import SearchICDCodeForm from '../SearchICDCode';
 interface Props {
   modalOpen: boolean; // whether modal is open
   onClose: () => void;
-  onSubmit: (values: DiagnosisFormValues) => void;
+  onSubmit: (values: DiagnosisFormValues) => void | Promise<void>;
   error?: string; // error message for form
   initialValues: Diagnosis | undefined; // initial values for form
 }

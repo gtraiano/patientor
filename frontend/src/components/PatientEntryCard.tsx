@@ -12,8 +12,8 @@ import { getDiagnosis } from '../controllers';
 interface Props {
     entry: Entry,
     actions: EntryAction[],
-    onEdit?: (entry: Entry) => void,
-    onDelete?: (entry: Entry) => void
+    onEdit?: (entry: Entry) => void | Promise<void>,
+    onDelete?: (entry: Entry) => void | Promise<void>
 }
 
 export interface EntryAction extends Action {
@@ -128,11 +128,11 @@ const PatientEntryCard = ({ entry, actions }: Props) => {
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>Discharged on</Table.Cell>
-                            <Table.Cell>{entry.discharge.date}</Table.Cell>
+                            <Table.Cell>{entry?.discharge?.date}</Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>Discharge criteria</Table.Cell>
-                            <Table.Cell>{entry.discharge.criteria}</Table.Cell>
+                            <Table.Cell>{entry?.discharge?.criteria}</Table.Cell>
                         </Table.Row>
                     </Table.Body>
                 </Table>

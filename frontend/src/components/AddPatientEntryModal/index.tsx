@@ -5,7 +5,7 @@ import AddEntryForm, { EntryFormValues } from "./AddEntryForm";
 interface Props {
   modalOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: EntryFormValues) => void;
+  onSubmit: (values: EntryFormValues) => void | Promise<void>;
   initialValues: EntryFormValues | undefined;
   error?: string;
 }

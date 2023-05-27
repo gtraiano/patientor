@@ -5,7 +5,7 @@ import AddPatientForm, { PatientFormValues } from './AddPatientForm';
 interface Props {
   modalOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: PatientFormValues) => void;
+  onSubmit: (values: PatientFormValues) => void | Promise<void>;
   error?: string;
   initialValues?: PatientFormValues;
 }
