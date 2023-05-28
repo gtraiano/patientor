@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Grid, Button } from "semantic-ui-react";
+import { Grid, Button, Loader } from "semantic-ui-react";
 import { Field, Formik, Form, FormikProps } from "formik";
 import { TextField } from '../../components/FormFields';
 
@@ -16,12 +16,13 @@ enum AuthenticationFormFunction {
 
 interface Props {
   type?: AuthenticationFormFunction,
+  busy?: boolean,
   onSubmit: {
     [key in AuthenticationFormFunction]: (values: AuthenticationFormValues) => void;
    } // on submit callback
 }
 
-const AuthenticationForm = ( { onSubmit, type = AuthenticationFormFunction.auth }: Props ) => {
+const AuthenticationForm = ( { onSubmit, type = AuthenticationFormFunction.auth, busy = false }: Props ) => {
     const [formType, setFormType] = useState(type);
     const ref = useRef<FormikProps<AuthenticationFormValues>>(null);
     
@@ -123,9 +124,12 @@ const AuthenticationForm = ( { onSubmit, type = AuthenticationFormFunction.auth 
                   <Button
                     type="submit"
                     color="green"
-                    disabled={!dirty || !isValid}
+                    disabled={!dirty || !isValid || busy}
                   >
-                    {formType === AuthenticationFormFunction.auth ? 'Login' : 'Register'}
+                    {busy
+                      ? <Loader active size="tiny" inline/>
+                      : formType === AuthenticationFormFunction.auth ? 'Login' : 'Register'
+                    }
                   </Button>
                 </Grid.Column>
               </Grid>
