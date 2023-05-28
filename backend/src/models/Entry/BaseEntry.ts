@@ -4,7 +4,7 @@ import { EntryType, BaseEntry } from '../../types';
 export interface BaseEntryDoc extends BaseEntry, Document {
     id: string,
     patientId: Schema.Types.ObjectId,
-    //authorId: type: Schema.Types.ObjectId
+    authorId: Schema.Types.ObjectId
 }
 
 export const options = { discriminatorKey: 'type' };
@@ -18,7 +18,11 @@ export const BaseEntrySchema: Schema = new Schema<BaseEntryDoc>(
             ref: 'Patient',
             required: true
         },
-        //authorId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        authorId: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
         description: {
             type: String,
             required: true
@@ -38,7 +42,7 @@ export const BaseEntrySchema: Schema = new Schema<BaseEntryDoc>(
         type: {
             type: String,
             enum: {
-                values: Object.keys(EntryType),
+                values: Object.values(EntryType),
                 message: '{VALUE} is not supported'
             },
             required: true
