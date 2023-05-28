@@ -3,6 +3,7 @@
 import { Router } from "express";
 import patientsService from '../services/patients';
 import { Entry, NewEntry, NewPatient, Patient } from "../types";
+import config from "../config";
 
 const patientsRouter: Router = Router();
 
@@ -53,8 +54,9 @@ patientsRouter.post('/', async (req, res) => {
 
 patientsRouter.post('/:id/entries', async (req, res) => {
     const entry = req.body;
+    const authorId = (req as any)[config.accessToken.name].id;
     try {
-        res.json(await patientsService.addEntry(req.params.id, entry as NewEntry));
+        res.json(await patientsService.addEntry(authorId as string, req.params.id, entry as NewEntry));
     }
     catch(error: any) {
         res.status(400).json({ error: error.message });
@@ -62,8 +64,9 @@ patientsRouter.post('/:id/entries', async (req, res) => {
 });
 
 patientsRouter.patch('/:id/entries/:entryId', async (req, res) => {
+    const authorId = (req as any)[config.accessToken.name].id;
     try {
-        const entry = await patientsService.editEntry(req.params.id, req.params.entryId, req.body as Entry, req.method);
+        const entry = await patientsService.editEntry(authorId as string, req.params.id, req.params.entryId, req.body as Entry);
         res.json(entry);
     }
     catch(error: any) {
@@ -82,8 +85,9 @@ patientsRouter.delete('/:id/entries/:entryId', async (req, res) => {
 });
 
 patientsRouter.put('/:id/entries/:entryId', async (req, res) => {
+    const authorId = (req as any)[config.accessToken.name].id;
     try {
-        const entry = await patientsService.editEntry(req.params.id, req.params.entryId, req.body, req.method);
+        const entry = await patientsService.editEntry(authorId as string, req.params.id, req.params.entryId, req.body as Entry);
         res.json(entry);
     }
     catch(error: any) {
