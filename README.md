@@ -1,6 +1,6 @@
 # Patientor
 
-My solution for Full Stack Open 2021 course's [patientor](https://fullstackopen.com/en/part9/react_with_types/).
+My solution for Full Stack Open 2021 course's [patientor](https://fullstackopen.com/en/part9/legacy_patientor_the_old_material/).
 
 Live demo [here](https://patientor.onrender.com/).
 
