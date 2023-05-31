@@ -2,7 +2,7 @@ import './styles/general.css';
 
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
-import { Button, Divider, Header, Container, Message } from "semantic-ui-react";
+import { Button, Divider, Header, Container, Message, Loader } from "semantic-ui-react";
 
 
 import axios, {
@@ -33,7 +33,7 @@ import AuthenticationForm, { AuthenticationFormValues } from "./pages/Authentica
 import UserInfo from "./pages/UserInfo";
 
 const App = () => {
-	const [{ auth, scheduler, message }, dispatch] = useStateValue();
+	const [{ patients, auth, scheduler, message }, dispatch] = useStateValue();
 	let refreshHandler: NodeJS.Timeout | undefined = undefined;
 	const [busy, setBusy] = useState<boolean>(false);
 	//let checkBackendHandler: NodeJS.Timeout | undefined = undefined;
@@ -51,10 +51,14 @@ const App = () => {
 	React.useEffect(() => {
 		const fetchPatientList = async (): Promise<void> => {
 			try {
+				setBusy(true);
 				dispatch(setPatientList(await getPatients()));
 			}
 			catch (e) {
 				console.error(e);
+			}
+			finally {
+				setBusy(false);
 			}
 		};
 		const fetchDiagnosisList = async (): Promise<void> => {
@@ -149,8 +153,11 @@ const App = () => {
 			})
 			.then(() => {
 				// login new user
-				//setTimeout(() => { submitCredentials(username, password); }, 1500);
-				setTimeout(() => void new Promise((resolve) => { resolve(submitCredentials(username, password)); }), 1500);
+				new Promise(resolve => {
+					resolve(setTimeout(() => {
+						submitCredentials(username, password);
+					}, 1500));
+				});
 			})
 			.catch(error => {
 				if (axios.isAxiosError(error)) {
@@ -239,7 +246,10 @@ const App = () => {
 									<UserInfo />
 								</Route>
 								<Route exact path="/">
-									<PatientListPage />
+									{ !Object.keys(patients).length && busy
+										? <Loader active size='large' content="Fetching patients list"/>
+										: <PatientListPage />
+									}
 								</Route>
 								<Route path="*">
 									<Message error>
