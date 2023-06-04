@@ -64,18 +64,26 @@ const addEntry = async (authorId: string, patientdId: string, entry: NewEntry): 
     return patient.toJSON();
 };
 
-const editEntry = async (authorId: string, patientId: string, entryId: string, entry: Entry): Promise<Patient> => {
+const editEntry = async (_authorId: string, patientId: string, entryId: string, entry: Entry): Promise<Patient> => {
     const patient = await PatientModel.findOne({ _id: patientId });
     if(!patient) {
         throw new Error('Patient id does not exist');
     }
 
+    const original = await BaseEntry.findById(entryId); // get original author id, patient id and version
+
     const edited = await BaseEntry.replaceOne(
         { _id: entryId },
-        { ...entry, authorId, patientId },
+        {
+            ...entry,
+            authorId: original?.authorId,
+            patientId: original?.patientId,
+            __v: entry.type !== original?.type ? 0 : original?.__v as number + 1    // reset version on entry type change, otherwise update
+        },
         { overwriteDiscriminatorKey: true, runValidators: true, upsert: false }
     );
-    if(!edited.modifiedCount) throw new Error('Entry id does not exist');
+    
+    if(!edited.matchedCount) throw new Error('Entry id does not exist');
 
     return patient.toJSON();
 };
