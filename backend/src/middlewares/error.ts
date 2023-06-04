@@ -16,16 +16,16 @@ const authErrorHandler = (error: any, _request: Request, response: Response, nex
         return response.status(400).json({ error: 'malformatted id' || error.message });
     }
     else if (error.name === 'ValidationError') {
-        return response.status(400).json({ error: error.message });
+        return response.status(400).json({ error: (error as Error).message });
     }
     else if (error.name === 'JsonWebTokenError') {
         return response.status(401).json({ error: 'invalid token' });
     }
     else if (error.name === 'TokenExpiredError') {
-        return response.status(401).json({ error: error.message || 'token expired' });
+        return response.status(401).json({ error: (error as Error).message || 'token expired' });
     }
     else if (error.name === 'InvalidCredentials') {
-        return response.status(401).json({ error: error.message });
+        return response.status(401).json({ error: (error as Error).message });
     }
     return next(error);
 };
@@ -33,12 +33,12 @@ const authErrorHandler = (error: any, _request: Request, response: Response, nex
 const dbErrorHandler = (error: MongooseError | any, _request: Request, response: Response, next: NextFunction) => {
     if(error instanceof MongooseError) return response.status(400).json({ error: error.message });
     return next(error);
-}
+};
 
 const generalErrorHandler = (error: any | CustomError, _request: Request, response: Response, _next: NextFunction) => {
     if(error instanceof CustomError) return response.status(error?.code || 500).json({ error: error.message });
-    return response.status(500).json({ error: error.message });
-}
+    return response.status(500).json({ error: (error as Error).message });
+};
 
 export default {
     auth: {
@@ -50,4 +50,4 @@ export default {
     general: {
         generalErrorHandler
     }
-}
+};
