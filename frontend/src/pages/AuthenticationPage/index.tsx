@@ -125,6 +125,8 @@ const AuthenticationForm = ( { onSubmit, type = AuthenticationFormFunction.auth,
                     type="submit"
                     color="green"
                     disabled={!dirty || !isValid || busy}
+                    size="medium"
+                    style={{ width: '10ch', height: '110%' }}
                   >
                     {busy
                       ? <Loader active size="tiny" inline/>
