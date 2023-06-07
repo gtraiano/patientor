@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { Router } from "express";
 import mongoose from "mongoose";
-import { CustomError } from "../middlewares/error";
+import { CustomError } from "../middlewares/error/error";
 import usersService from '../services/users';
 import { NewUser } from "../types";
 

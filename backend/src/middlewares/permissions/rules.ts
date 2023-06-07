@@ -1,5 +1,5 @@
 import { UserRoles } from "../../types";
-import { CustomError } from "../error";
+import { CustomError } from "../error/error";
 import config from '../../config';
 import BaseEntry from "../../models/Entry/BaseEntry";
 import { RouteRule } from "./types";

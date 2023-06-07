@@ -1,18 +1,27 @@
 import { NextFunction, Request, Response } from 'express';
 import config from '../../config';
 import rules from './rules';
-import { CustomError } from '../error';
+import { CustomError } from '../error/error';
 import { authMiddlewareInUse, extractAccessToken, parseUrlPath } from './helper';
+import { asyncHandler, unloadMiddleware } from '../util';
 
-export const isOperationAllowed = (req: Request, _res: Response, next: NextFunction): void => {
+export const isOperationAllowed = async (req: Request, _res: Response, next: NextFunction) => {
+    // if auth middleware is not in use, no user auth info has been appended to request object
+    // thus it is impossible to apply operation permissions
+    if(!authMiddlewareInUse(req)) {
+        // so we remove middleware from app stack
+        console.warn('auth middleware not in use!');
+        console.warn('unloading permissions middleware');
+        unloadMiddleware(req, permissions.name);
+        return next();
+    }
+
+    // do not run on auth route
+    if(req.path === `${config.routes.api.root}${config.routes.api.auth}`) return next();
+
+    let opAllowed = true, error: Error | null = null;
+
     try {
-        // do not run on auth route
-        if(req.path === `${config.routes.api.root}${config.routes.api.auth}`) return next();
-
-        // if auth middleware is not in use, no user auth info has been appended to request object
-        // thus it is impossible to apply operation permissions
-        if(!authMiddlewareInUse(req)) return next();
-        
         // user token
         const user = extractAccessToken(req);
         // request url route and id
@@ -24,7 +33,7 @@ export const isOperationAllowed = (req: Request, _res: Response, next: NextFunct
         if(rule) {
             console.log('has rules', url.route && rules.has(url.route), url.route && rules.get(url.route)?.[req.method]?.find((r: any) => r.params === (url.id !== undefined)));
             if(typeof rule.allow === 'boolean') {
-                console.log('operation allowed', rule);
+                opAllowed = rule.allow;
                 // throw general message error on false return value
                 if(!rule.allow) throw new CustomError('operation is not allowed', 401);
             }
@@ -32,30 +41,36 @@ export const isOperationAllowed = (req: Request, _res: Response, next: NextFunct
                 const allowed = rule.allow(req, user.id, url.id);
                 // in case rule.allow does not throw error when it returns false value, throw a general message error
                 if(typeof allowed === 'boolean') {
-                    console.log('operation allowed', allowed);
+                    opAllowed = allowed;
                     if(!allowed) throw new CustomError('operation is not allowed', 401);
                 }
-                if(allowed instanceof Promise) {
+                else if(allowed instanceof Promise) {
                     // needs to be resolved and handle errors
-                    return void allowed.then(ok => {
-                        console.log('operation allowed', ok);
-                        return !ok
-                            ? next(new CustomError('operation is not allowed', 401))
-                            : next();
-                    })
-                    .catch(e => {
-                        next(e ?? new CustomError('operation is not allowed', 401));
-                    });
+                    opAllowed = await Promise.resolve(allowed);
+                    if(!opAllowed) throw new CustomError('operation is not allowed', 401);
                 }
             }
         }
         else {
             console.log(`no rule found for ${req.method} ${url.route} ${url.id || ''}`);
         }
-
-        next();
     }
     catch(e) {
-        next(e ?? new CustomError('operation is not allowed', 401));
+        error = e as Error;
+        // operation not allowed if there was an error
+        opAllowed = false;
+    }
+    finally {
+        console.log('allowed', opAllowed, 'error', error?.message);
+        // continue to next middleware
+        next(
+            error
+                ? error ?? new CustomError('operation is not allowed', 401)
+                : undefined
+        );
     }
 };
+
+export function permissions(req: Request, res: Response, next: NextFunction) {
+    asyncHandler(isOperationAllowed)(req, res, next);
+}

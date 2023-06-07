@@ -1,7 +1,8 @@
-import Layer, { Request } from "express";
+import { Request } from "express";
 import { DecodedAccessToken } from "../../types";
 import config from "../../config";
 import { decodeAccessToken, verifyRefreshToken } from '../auth';
+import { isMiddlewareInUse } from "../util";
 
 export const extractAccessToken = (req: Request) => (req as any)[config.accessToken.name] as DecodedAccessToken;
 
@@ -29,16 +30,4 @@ export const parseUrlPath = (path:string) : {
 };
 
 // checks if auth middleware is in use
-export const authMiddlewareInUse = (req: Request) => {
-    //if(!req.app._router) return false;
-    const stack = req.app._router.stack as Array<typeof Layer> ?? [];
-    return (
-        stack.findIndex(l => l.name === decodeAccessToken.name) !== -1 &&
-        stack.findIndex(l => l.name === verifyRefreshToken.name) !== -1
-    );
-};
-
-export const isMiddlewareInUse = (req: Request, names: string[]): boolean => {
-    const stack = req.app._router.stack as Array<typeof Layer> ?? [];
-    return stack.reduce<boolean>((all, l) => all && names.includes(l.name), true);
-};
+export const authMiddlewareInUse = (req: Request) => isMiddlewareInUse(req, [decodeAccessToken.name, verifyRefreshToken.name]);

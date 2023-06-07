@@ -91,7 +91,8 @@ patientsRouter.put('/:id/entries/:entryId', async (req, res) => {
         res.json(entry);
     }
     catch(error: any) {
-        res.status(400).json({ error: error.message });
+        //res.status(400).json({ error: error.message });
+        // handled by error handling middleware
     }
 });
 
