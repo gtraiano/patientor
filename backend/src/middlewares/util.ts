@@ -9,8 +9,7 @@ export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunctio
 // https://stackoverflow.com/questions/26304234/check-if-a-given-middleware-is-being-used
 export const isMiddlewareInUse = (req: Request, names: string[]): boolean => {
     const stack = req.app._router.stack as Array<typeof Layer> ?? [];
-    //return stack.map(({ name }) => name).filter(n => names.includes(n)).length === names.length;
-    return stack.reduce<boolean>((all, { name }) => all || names.includes(name), false);
+    return stack.map(({ name }) => name).filter(n => names.includes(n)).length === names.length;
 };
 
 // removes middleware by name from app stack

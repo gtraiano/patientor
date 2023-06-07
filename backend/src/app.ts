@@ -31,8 +31,8 @@ app.use(cors({
 app.use(cookieParser());
 app.use(decodeAccessToken);
 app.use(verifyRefreshToken);
-app.use(permissions);
 app.use(errorMiddleware.auth.authErrorHandler);
+app.use(permissions);
 
 // routes
 app.use(`${config.routes.api.root}${config.routes.api.auth}`, authRouter);
