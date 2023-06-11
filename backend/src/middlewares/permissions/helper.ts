@@ -2,7 +2,8 @@ import { Request } from "express";
 import { DecodedAccessToken } from "../../types";
 import config from "../../config";
 import { decodeAccessToken, verifyRefreshToken } from '../auth';
-import { isMiddlewareInUse } from "../util";
+import { isMiddlewareInUse, middlewareIndex } from "../util";
+import { permissions } from "./permissions";
 
 export const extractAccessToken = (req: Request) => (req as any)[config.accessToken.name] as DecodedAccessToken;
 
@@ -31,3 +32,10 @@ export const parseUrlPath = (path:string) : {
 
 // checks if auth middleware is in use
 export const authMiddlewareInUse = (req: Request) => isMiddlewareInUse(req, [decodeAccessToken.name, verifyRefreshToken.name]);
+
+export const authMiddlewareInOrder = (req: Request): boolean => {
+    const authOrder = middlewareIndex(req, [decodeAccessToken.name, verifyRefreshToken.name]);
+    const [permOrder] = middlewareIndex(req, [permissions.name]);
+
+    return authOrder.every(o => o < permOrder);
+};

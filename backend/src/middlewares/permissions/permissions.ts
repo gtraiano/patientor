@@ -2,12 +2,20 @@ import { NextFunction, Request, Response } from 'express';
 import config from '../../config';
 import rules from './rules';
 import { CustomError } from '../error/error';
-import { authMiddlewareInUse, extractAccessToken, parseUrlPath } from './helper';
+import { authMiddlewareInOrder, authMiddlewareInUse, extractAccessToken, parseUrlPath } from './helper';
 import { asyncHandler, unloadMiddleware } from '../util';
 
 export const isOperationAllowed = async (req: Request, _res: Response, next: NextFunction) => {
-    // if auth middleware is not in use, no user auth info has been appended to request object
+    // if auth middleware is not in use or does not precede permissions middleware, no user auth info has been appended to request object
     // thus it is impossible to apply operation permissions
+    // so we remove permissions middleware form the app stack
+    if(!authMiddlewareInOrder(req)) {
+        console.warn('auth middleware must precede permissions middleware');
+        console.warn('unloading permissions middleware');
+        unloadMiddleware(req, permissions.name);
+        return next();
+    }
+    
     if(!authMiddlewareInUse(req)) {
         // so we remove middleware from app stack
         console.warn('auth middleware not in use!');

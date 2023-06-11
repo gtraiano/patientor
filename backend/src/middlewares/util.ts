@@ -12,6 +12,12 @@ export const isMiddlewareInUse = (req: Request, names: string[]): boolean => {
     return stack.map(({ name }) => name).filter(n => names.includes(n)).length === names.length;
 };
 
+// get middleware indexes in app stack
+export const middlewareIndex = (req: Request, names: string[]): number[] => {
+    const stack = req.app._router.stack as Array<typeof Layer> ?? [];
+    return stack.reduce<number[]>((idx, { name }, i) => names.includes(name) ? [...idx, i]: idx, []);
+};
+
 // removes middleware by name from app stack
 export const unloadMiddleware = (req: Request, name: string) => {
     const stack = req.app._router.stack as Array<typeof Layer> ?? [];
