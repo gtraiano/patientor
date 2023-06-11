@@ -4,6 +4,24 @@ My solution for Full Stack Open 2021 course's [patientor](https://fullstackopen.
 
 Live demo [here](https://patientor.onrender.com/).
 
+## Scripts
+
+### Backend
+`dev` to start development server
+
+`tsc` to build the code
+
+`start` to run the build
+
+### Frontend
+`start` to run development server
+
+`start-legacy` to run development server with Node version >= 17
+
+
+`build` to build the code
+
+`build-legacy` to build the code with modern Node version >= 17
 
 ## Setup
 ### *SSL certificate*
@@ -42,5 +60,5 @@ A self-signed certificate will suffice for development purposes.
   - Fix issue when access token is deleted from client's _localStorage_ while user has not logged out [*Fixed!*]
   - Run automated process to clean expired refresh tokens
 - **Users**
-  - Introduce a permissions control so as to impose restrictions to GET, PUT and DELETE operations [*partially implemented*]
-  - Introduce a permissions control middleware to control read and write access to patients, diagnoses etc.
+  - Introduce a permissions control so as to impose restrictions to GET, PUT and DELETE operations [*Completed*]
+  - Introduce a permissions control middleware to control read and write access to patients, diagnoses etc. [*Completed for write access*]
