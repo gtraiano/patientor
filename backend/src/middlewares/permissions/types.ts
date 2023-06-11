@@ -4,11 +4,12 @@ export type RequestMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 // asterisk serves as a wildcard or as the remaining methods for which rules have not been set
 
 export interface MethodRule {
-    params: boolean,
-    //allow: (roles: UserRole[], sourceId: string, targetId?: string, req?: Request) => boolean | Promise<boolean>,
-    allow?: ((req: Request, sourceId: string, targetId?: string) => Promise<boolean> | boolean) | boolean
+    params: boolean,                                                    // path url has parameters (e.g. /path/123/subpath/456)
+    allow?: ((req: Request, primaryId: string, secondaryId?: string)    // allow operation 
+                                                                        // primaryId = primary entity id, secondaryId = secondary entity id (e.g. /patients/primaryId/entries/secondaryId)
+        => Promise<boolean> | boolean) | boolean                        // may be boolean, function or promise returning boolean
 }
 
-export type RouteRule = {
+export type RouteRule = {                                               // rule for specific method
     [method in RequestMethod as string]?: MethodRule[]
 };

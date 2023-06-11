@@ -15,26 +15,28 @@ rules.set(
         'GET': [
             {
                 params: true,
-                allow: (req: Request, sourceId: string, targetId?: string): boolean => {
+                allow: (req: Request, primaryId: string, secondaryId?: string): boolean => {
+                    // an admin can view any id, a user can only view their own id
                     const { roles } = extractAccessToken(req);
-                    const allowed = roles.find(r => r.name === UserRoles.Admin) !== undefined || sourceId === targetId;
-                    if(!allowed) throw new CustomError(`You have no permission to access user id ${targetId ?? ''}`, 401);
+                    const allowed = roles.find(r => r.name === UserRoles.Admin) !== undefined || primaryId === secondaryId;
+                    if(!allowed) throw new CustomError(`You have no permission to access user id ${secondaryId ?? ''}`, 401);
                     return allowed;
                     
                 }
             },
             {
                 params: false,
-                allow: true
+                allow: true // any role can get aggregate list of all users
             }
         ],
         'PUT': [
             {
                 params: true,
-                allow: (req: Request, sourceId: string, targetId?: string): boolean => {
+                allow: (req: Request, primaryId: string, secondaryId?: string): boolean => {
+                    // an admin can change any user, a user can only change their own id
                     const { roles } = extractAccessToken(req);
-                    const allowed = roles.find(r => r.name === UserRoles.Admin) !== undefined || sourceId === targetId;
-                    if(!allowed) throw new CustomError(`You have no permission to edit user id ${targetId ?? ''}`, 401);
+                    const allowed = roles.find(r => r.name === UserRoles.Admin) !== undefined || primaryId === secondaryId;
+                    if(!allowed) throw new CustomError(`You have no permission to edit user id ${secondaryId ?? ''}`, 401);
                     return allowed;
                 }
             }
@@ -42,16 +44,17 @@ rules.set(
         'POST': [
             {
                 params: true,
-                allow: true
+                allow: true // any role can create a new user
             }
         ],
         'DELETE': [
             {
                 params: true,
-                allow: (req: Request, sourceId: string, targetId?: string): boolean => {
+                allow: (req: Request, primaryId: string, secondaryId?: string): boolean => {
+                    // an admin can delete any user, a user can only delete their own id
                     const { roles } = extractAccessToken(req);
-                    const allowed = roles.find(r => r.name === UserRoles.Admin) !== undefined || sourceId === targetId;
-                    if(!allowed) throw new CustomError(`You have no permission to delete user id ${targetId ?? ''}`, 401);
+                    const allowed = roles.find(r => r.name === UserRoles.Admin) !== undefined || primaryId === secondaryId;
+                    if(!allowed) throw new CustomError(`You have no permission to delete user id ${secondaryId ?? ''}`, 401);
                     return allowed;
                 }
             }
@@ -64,19 +67,23 @@ rules.set(
     `${config.routes.api.root}${config.routes.api.patients}`,
     {
         'GET': [
+            // any role can get an aggregate list of patients
             {
                 params: false,
                 allow: true
             },
+            // any role can get a patient by id
             {
                 params: true,
                 allow: true
             }
         ],
         'PUT': [
+            // an admin can both edit a patient and an entry
+            // a user can only edit an entry which they have authored
             {
                 params: true,
-                allow: async (req: Request, _sourceId: string, _targetId?: string): Promise<boolean> => {
+                allow: async (req: Request, _primaryId: string, _secondaryId?: string): Promise<boolean> => {
                     // auth user token
                     const { id, roles } = extractAccessToken(req);
                     // entity to be edited id
@@ -101,9 +108,10 @@ rules.set(
             }
         ],
         'PATCH': [
+            // same rules as for PUT
             {
                 params: true,
-                allow: async (req: Request, _sourceId: string, _targetId?: string): Promise<boolean> => {
+                allow: async (req: Request, _primaryId: string, _secondaryId?: string): Promise<boolean> => {
                     // auth user token
                     const { id, roles } = extractAccessToken(req);
                     // entity to be edited id
@@ -128,6 +136,7 @@ rules.set(
             }
         ],
         'POST': [
+            // any user can create a patient or an entry
             {
                 params: false,
                 allow: true
@@ -141,40 +150,47 @@ rules.set(
     `${config.routes.api.root}${config.routes.api.diagnoses}`,
     {
         'GET': [
+            // any role can get an aggregate list of diagnoses
             {
                 params: false,
                 allow: true
             },
+            // any role can get an a specific diagnosis by id
             {
                 params: true,
                 allow: true
             }
         ],
         'POST': [
+            // any role can create a new diagnosis
             {
                 params: false,
                 allow: true
             }
         ],
         'PUT': [
+            // any role can change a diagnosis
             {
                 params: true,
                 allow: true
             }
         ],
         'DELETE': [
+            // only an admin may delete a diagnosis
             {
                 params: true,
-                allow: (req: Request, _sourceId: string, _targetId?: string): boolean => extractAccessToken(req).roles.find(r => r.name === UserRoles.Admin) !== undefined
+                allow: (req: Request, _primaryId: string, _secondaryId?: string): boolean => extractAccessToken(req).roles.find(r => r.name === UserRoles.Admin) !== undefined
             }
         ],
     }
 );
 
+// ping route
 rules.set(
     `${config.routes.api.root}${config.routes.api.ping}`,
     {
         'GET': [
+            // any user may use the ping route to check for api online status
             {
                 params: false,
                 allow: true
