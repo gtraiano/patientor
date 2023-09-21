@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Grid, Button, Loader } from "semantic-ui-react";
 import { Field, Formik, Form, FormikProps } from "formik";
 import { TextField } from '../../components/FormFields';
+import styles from './style.module.css';
 
 export type AuthenticationFormValues = {
     username: string,
@@ -46,10 +47,14 @@ const AuthenticationForm = ( { onSubmit, type = AuthenticationFormFunction.auth,
                 <a
                     onClick={(e) => {
                         e.preventDefault();
-                        formType !== AuthenticationFormFunction.auth && setFormType(AuthenticationFormFunction.auth);
+                        // pointer events prevented via css when link is active, so guard is no longer necessary
+                        setFormType(AuthenticationFormFunction.auth);
                     }}
                     href={formType !== AuthenticationFormFunction.auth ? "" : undefined}
-                    style={{ ...formType === AuthenticationFormFunction.auth && { color: "black" } }}
+                    className={[
+                        busy && styles["disabled"],
+                        formType === AuthenticationFormFunction.auth && styles["active"]
+                    ].filter(Boolean).join(' ')}
                 >
                     Login
                 </a>
@@ -57,10 +62,14 @@ const AuthenticationForm = ( { onSubmit, type = AuthenticationFormFunction.auth,
                 <a
                     onClick={(e) => {
                         e.preventDefault();
-                        formType !== AuthenticationFormFunction.register && setFormType(AuthenticationFormFunction.register);
+                        // pointer events prevented via css when link is active, so guard is no longer necessary
+                        setFormType(AuthenticationFormFunction.register);
                     }}
                     href={formType !== AuthenticationFormFunction.register ? "" : undefined}
-                    style={{ ...formType === AuthenticationFormFunction.register && { color: "black" } }}
+                    className={[
+                        busy && styles["disabled"],
+                        formType === AuthenticationFormFunction.register && styles["active"]
+                    ].filter(Boolean).join(' ')}
                 >
                     Register
                 </a>
