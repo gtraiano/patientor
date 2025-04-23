@@ -111,6 +111,7 @@ const AuthenticationForm = ( { onSubmit, type = AuthenticationFormFunction.auth,
                 placeholder="Username"
                 name="username"
                 component={TextField}
+                disabled={busy}
               />
               {
                   formType === AuthenticationFormFunction.register &&
@@ -127,6 +128,7 @@ const AuthenticationForm = ( { onSubmit, type = AuthenticationFormFunction.auth,
                 name="password"
                 type="password"
                 component={TextField}
+                disabled={busy}
               />
               <Grid>
                 <Grid.Column width={5}>
