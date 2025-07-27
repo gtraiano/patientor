@@ -14,15 +14,8 @@ export interface SearchResults {
     error?: string | undefined
 }
 
-interface ICDCodeLookupResults {
-    /* returned when searching by term */
-    terms?: string,
-    results?: Array<{ name: string, desc: string }>,
-    /* returned when searching by code */
-    code?: { name: string, desc: string },
-    to?: { codes: Array<{ name: string, desc: string }> }
-    subcodes?: Array<{ name: string, desc: string }>
-}
+// https://clinicaltables.nlm.nih.gov/apidoc/icd10cm/v3/doc.html
+export type CTSSAPIResponse = [terms: string, total: number, codes: [string], efHash: string | null, results: [[code: string, description: string]]];
 
 const SearchICDCode = () => {
     const [{ terms, results, error }, setResults] = useState<SearchResults>({ terms: undefined, results: [], error: undefined });
@@ -35,31 +28,11 @@ const SearchICDCode = () => {
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const doneTypingInterval = 750;
 
-    const extractResults = (data: ICDCodeLookupResults): SearchResults => {
-        if(data.terms) {
-            return {
-                results: data?.results?.map(({ name, desc }) => ({ name: name, desc: desc })) || [],
-                terms: data.terms
-            };
-        }
-        else if(data.code) {
-            const rel = data.to
-                ? data.to.codes.map(({ name, desc }: { name: string, desc: string }) => ({ name, desc}))
-                : data.subcodes ? data.subcodes.map(({ name, desc }: { name: string, desc: string }) => ({ name, desc})) : [];
-            return {
-                results: [
-                    { name: data.code.name, desc: data.code.desc },
-                    ...rel
-                ],
-                terms: data.code.name
-            };
-        }
-        else {
-            return {
-                terms: undefined,
-                results: []
-            };
-        }
+    const extractResults = (data: CTSSAPIResponse): SearchResults => {
+        return {
+            terms: data[0],
+            results: data[4].map(([code, description]) => ({ name: code, desc: description }))
+        };
     };
 
     const updateResultsList = async (terms: string) => {
@@ -143,8 +116,8 @@ const SearchICDCode = () => {
                 <Label color='blue'>
                     powered by
                     <Label.Detail as='a'>
-                        <span onClick={() => window.open('https://icdcodelookup.com', '_blank', 'noreferrer,noopener')}>
-                            <em>icdcodelookup</em>
+                        <span onClick={() => window.open('https://clinicaltables.nlm.nih.gov/apidoc/icd10cm/v3/doc.html', '_blank', 'noreferrer,noopener')}>
+                            <em>Clinical Table Search Service</em>
                         </span>
                     </Label.Detail>
                 </Label>

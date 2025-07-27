@@ -18,7 +18,7 @@ const isValidGender = (gender: string): boolean => {
 
 const isNumber = (value: unknown) => {
     return typeof value === 'number' || value instanceof Number;
-}
+};
 
 const ssnPattern = /^[\da-zA-Z]+-[\da-zA-Z]+$/;
 const datePattern = /^\d{2,4}-\d{1,2}-\d{1,2}$/;
@@ -35,21 +35,21 @@ const parseGender = (gender: string): Gender => {
         throw new Error('Incorrect or missing gender: ' + gender);
     }
     return gender as Gender;
-}
+};
 
 const parseName = (name: unknown): string => {
     if(!name || !isString(name)) {
         throw new Error('Incorrect or missing name: ' + name);
     }
     return name as string;
-}
+};
 
 const parseString = (text: unknown, paramName: string , pattern: RegExp): string => {
     if(!text || !isString(text) || !matchesPattern(text as string, pattern)) {
         throw new Error('Incorrect or missing parameter: ' + paramName);
     }
     return text as string;
-}
+};
 
 const isValidBaseEntry = (entry: NewEntry): boolean => {
     if(!entry.description || !isString(entry.description)) {
@@ -80,7 +80,7 @@ const isValidBaseEntry = (entry: NewEntry): boolean => {
     }
 
     return true;
-}
+};
 
 const parseHealthCheckEntry = (entry: HealthCheckEntry): HealthCheckEntry => {
     isValidBaseEntry(entry);
@@ -91,7 +91,7 @@ const parseHealthCheckEntry = (entry: HealthCheckEntry): HealthCheckEntry => {
         throw new Error('Incorrect or missing health check rating');
     }
     return entry;
-}
+};
 
 const parseHospitalEntry = (entry: HospitalEntry): HospitalEntry => {
     isValidBaseEntry(entry);
@@ -105,7 +105,7 @@ const parseHospitalEntry = (entry: HospitalEntry): HospitalEntry => {
         throw new Error('Incorrect or missing discharge date');
     }
     return entry;
-}
+};
 
 const parseOccupationalHealthcareEntry = (entry : OccupationalHealthcareEntry): OccupationalHealthcareEntry => {
     isValidBaseEntry(entry);
@@ -124,7 +124,7 @@ const parseOccupationalHealthcareEntry = (entry : OccupationalHealthcareEntry): 
         }
     }
     return entry;
-}
+};
 
 const parseEntry = (entry: NewEntry): HealthCheckEntry | HospitalEntry | OccupationalHealthcareEntry => {
     switch(entry.type) {
@@ -137,7 +137,7 @@ const parseEntry = (entry: NewEntry): HealthCheckEntry | HospitalEntry | Occupat
         default:
             throw new Error('Invalid or missing entry type');
     }
-}
+};
 
 const parseDiagnosis = (entry: any): Diagnosis => {
     Object.keys(entry).forEach(k => {
@@ -145,7 +145,7 @@ const parseDiagnosis = (entry: any): Diagnosis => {
             throw new Error(`Diagnosis ${k} is missing`);
     });
     return entry as Diagnosis;
-}
+};
 
 const parseEditPatient = (entry: any): PatientFormValues => {
     if(entry.id !== undefined) {
@@ -164,7 +164,7 @@ const parseEditPatient = (entry: any): PatientFormValues => {
         throw new Error('occupation must be a string');
     }
     return entry;
-}
+};
 
 const parseUser = (user: any): NewUser => {
     if(!user.username) throw new Error('Username is not defined');
@@ -179,10 +179,10 @@ const parseUser = (user: any): NewUser => {
             if(!roles.includes(role.name)) {
                 throw new Error(`${role.name} is not a valid user role`);
             }
-        })
+        });
     }
     return user;
-}
+};
 
 const Validation = {
     isString,
