@@ -8,6 +8,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
+    "react-scripts": "^4.0.3",
     "semantic-ui-css": "latest",
     "semantic-ui-react": "latest"
   },
@@ -20,7 +21,6 @@
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "eslint-config-react": "latest",
-    "react-scripts": "^4.0.3",
     "typescript": "latest"
   },
   "scripts": {
