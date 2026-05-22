@@ -10,7 +10,7 @@ export type AuthAction =
         type: 'LOGOUT'
     };
 
-export const loginUser = (auth: Auth): AuthAction => {
+export const loginUser = (auth: Auth | null): AuthAction => {
     return {
         type: 'LOGIN',
         payload: auth

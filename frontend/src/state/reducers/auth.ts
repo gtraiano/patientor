@@ -3,9 +3,9 @@ import { AuthAction } from "../actions/auth";
 
 export type AuthState = Auth | null | 'pending';
 
-const initialState = null;
+const initialState: AuthState = null;
 
-export const reducer = (state: Auth = initialState, action: AuthAction): AuthState => {
+export const reducer = (state: AuthState = initialState, action: AuthAction): AuthState => {
     switch(action.type) {
         case "LOGIN":
             return action.payload;

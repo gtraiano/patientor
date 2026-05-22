@@ -100,7 +100,7 @@ const App = () => {
 		else {
 			clearScheduledTimeouts();
 		}
-	}, [dispatch, auth?.id, auth?.token]);
+	}, [dispatch, auth === 'pending' ? null : auth?.id, auth === 'pending' ? null : auth?.token]);
 
 	useEffect(() => {
 		if (auth === 'pending') return;
