@@ -17,7 +17,7 @@ export interface State {
 const initialState: State = {
   patients: {},
   diagnoses: {},
-  auth: null,
+  auth: 'pending',
   scheduler: [] as NodeJS.Timeout[],
   message: null
 };

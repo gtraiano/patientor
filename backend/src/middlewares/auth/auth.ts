@@ -46,6 +46,7 @@ const isUserLoggedIn = async (request: Request, _response: Response, next: NextF
 };
 
 async function _verifyRefreshToken(request: Request, _response: Response, next: NextFunction) {
+    console.log('raw cookie:', request.cookies[config.refreshToken.cookie.name]);
     // refresh token verification will not be run for certain path/method combinations
     if(preventExecution(verifyRefreshToken.name, request.method as RequestMethod, request.path)) return next();
     

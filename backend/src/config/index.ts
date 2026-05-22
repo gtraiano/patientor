@@ -5,7 +5,7 @@ dotenv.config();
 
 const refreshTokenOptions = {
     httpOnly: true,
-    secure: true
+    secure: process.env.NODE_ENV === 'production'
 };
 
 const expires = () => new Date(Date.now() + 24*60*60*1000);

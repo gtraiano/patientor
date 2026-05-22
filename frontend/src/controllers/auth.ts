@@ -9,7 +9,7 @@ const decodeAccessToken = (token: string): Auth => {
         ? {
             token,
             ...JSON.parse(atob(accessToken[1])) // decode url64 string
-          } as Auth
+        } as Auth
         : null;
 };
 
@@ -44,13 +44,21 @@ export const registerUser = async (username: string, password: string, name?: st
 };
 
 export const refreshAccessToken = async (): Promise<Auth> => {
-    const response = await axios.put<string>('/auth');
-    return decodeAccessToken(response.data);
+    try {
+        const response = await axios.put<string>('/auth');
+        return decodeAccessToken(response.data);
+    }
+    catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+            return null; // no valid session, not an unexpected error
+        }
+        throw error; // unexpected errors still propagate
+    }
 };
 
 export const scheduleRefreshToken = (accessToken: Auth, callback: (token: Auth) => void): NodeJS.Timeout | undefined => {
-    if(!accessToken || new Date(accessToken.exp*1000) < new Date()) return undefined;
-    const when = Math.max(accessToken.exp*1000 - Date.now() - 10*1000, 0); // 10 secs before token expiration
+    if (!accessToken || new Date(accessToken.exp * 1000) < new Date()) return undefined;
+    const when = Math.max(accessToken.exp * 1000 - Date.now() - 10 * 1000, 0); // 10 secs before token expiration
     const handle = setTimeout(
         () => {
             void refreshAccessToken()
@@ -66,6 +74,6 @@ export const scheduleRefreshToken = (accessToken: Auth, callback: (token: Auth) 
         },
         when
     );
-    console.log(`access token refresh scheduled to run in ${when/1000} seconds [${new Date(Date.now() + when).toString()}]`);
+    console.log(`access token refresh scheduled to run in ${when / 1000} seconds [${new Date(Date.now() + when).toString()}]`);
     return handle;
 };

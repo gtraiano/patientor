@@ -26,9 +26,13 @@ export const middlewareRules: MiddlewareExecutionPreventionRules = {
             { path: `${config.routes.api.root}${config.routes.api.auth}`, prevent: true },
             { path: `${config.routes.api.root}${config.routes.api.users}`, prevent: true }
         ],
+        'PUT': [
+            // token refresh does not have an access token yet — that's the whole point
+            { path: `${config.routes.api.root}${config.routes.api.auth}`, prevent: true }
+        ],
         // execute on all other methods and paths
         '*': [
-            { path: /.*/g, prevent: false }
+            { path: /.*/, prevent: false }
         ]
     },
     [verifyRefreshToken.name]: {

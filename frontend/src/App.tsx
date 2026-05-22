@@ -4,13 +4,13 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import { Button, Divider, Header, Container, Message, Loader } from "semantic-ui-react";
 
-
 import axios, {
 	setAuthToken,
 	loginUser as authLogin,
 	logoutUser,
 	registerUser,
 	scheduleRefreshToken,
+	refreshAccessToken,
 	getPatients,
 	getDiagnoses
 } from './controllers';
@@ -36,19 +36,30 @@ const App = () => {
 	const [{ patients, auth, scheduler, message }, dispatch] = useStateValue();
 	let refreshHandler: NodeJS.Timeout | undefined = undefined;
 	const [busy, setBusy] = useState<boolean>(false);
-	//let checkBackendHandler: NodeJS.Timeout | undefined = undefined;
-	//let backendStatus: boolean | null = null;
 
+	// On mount: attempt to restore session via refresh token cookie.
+	// No localStorage involved — the httpOnly cookie is sent automatically.
 	React.useEffect(() => {
-		// retrieve stored access token
-		const storedToken = JSON.parse(localStorage.getItem('auth') || 'null') as Auth;
-		dispatch(loginUser(storedToken));
-		storedToken && setAuthToken(storedToken.token);
-		// clear scheduled setTimeouts on page refresh
+		const initAuth = async () => {
+			try {
+				const token = await refreshAccessToken();
+				dispatch(loginUser(token));
+				token && setAuthToken(token.token);
+			}
+			catch {
+				// No valid refresh token cookie — user must log in.
+				dispatch(loginUser(null));
+			}
+		};
+
+		void initAuth();
 		window.addEventListener('beforeunload', () => clearScheduledTimeouts());
 	}, []);
 
 	React.useEffect(() => {
+		// Do nothing while session check is still in flight.
+		if (auth === 'pending') return;
+
 		const fetchPatientList = async (): Promise<void> => {
 			try {
 				setBusy(true);
@@ -61,6 +72,7 @@ const App = () => {
 				setBusy(false);
 			}
 		};
+
 		const fetchDiagnosisList = async (): Promise<void> => {
 			try {
 				const data = await getDiagnoses();
@@ -72,35 +84,31 @@ const App = () => {
 		};
 
 		console.log(`user is logged ${auth ? 'in' : 'out'}`);
-		// is logged in
+
 		if (auth && auth.token) {
 			void fetchPatientList();
 			void fetchDiagnosisList();
 
 			console.log('will schedule access token refresh');
-			// schedule next access token refresh
 			refreshHandler = scheduleRefreshToken(auth, (t: Auth) => {
 				dispatch(loginUser(t));
 				t && setAuthToken(t.token);
-				localStorage.setItem('auth', JSON.stringify(t));
 				// remove oldest scheduled task id
 				dispatch(removeScheduled());
 			});
 		}
-		// on logout
 		else {
-			// clear all scheduled tasks
 			clearScheduledTimeouts();
 		}
 	}, [dispatch, auth?.id, auth?.token]);
 
 	useEffect(() => {
-		// if something went wrong with the refresh token
+		if (auth === 'pending') return;
+
 		if (refreshHandler === undefined) {
 			clearScheduledTimeouts();
-			return localStorage.removeItem('auth');
+			return;
 		}
-		// otherwise save scheduled task id
 		dispatch(addScheduled(refreshHandler));
 		console.log('refreshHandler', refreshHandler);
 	}, [refreshHandler]);
@@ -119,7 +127,6 @@ const App = () => {
 			.then(data => {
 				console.log('access token', data);
 				dispatch(loginUser(data));
-				localStorage.setItem('auth', JSON.stringify(data));
 				dispatch(displayMessage({
 					text: { content: `Logged in successfully as ${data?.name || data?.username || ''}`, header: 'Authentication Completed' },
 					type: MessageVariation.success
@@ -152,7 +159,7 @@ const App = () => {
 				}));
 			})
 			.then(() => {
-				// login new user
+				// Auto-login after registration
 				new Promise(resolve => {
 					resolve(setTimeout(() => {
 						submitCredentials(username, password);
@@ -166,7 +173,6 @@ const App = () => {
 						text: { header: 'Registration Failed', content: error.response?.data as string },
 						type: MessageVariation.error
 					}));
-					//return;
 				}
 				console.log(error);
 			})
@@ -176,11 +182,10 @@ const App = () => {
 	};
 
 	const exitApp = async () => {
-		if (auth) {
+		if (auth && auth !== 'pending') {
 			try {
 				const res = await logoutUser(auth.id);
 				if (res.status === 200) {
-					localStorage.removeItem('auth');
 					dispatch(clearAuth());
 				}
 			}
@@ -193,6 +198,11 @@ const App = () => {
 			}
 		}
 	};
+
+	// Session check still in flight — show nothing until we know the auth state.
+	if (auth === 'pending') {
+		return <Loader active size='large' content="Loading..." />;
+	}
 
 	return (
 		<div className="App">
