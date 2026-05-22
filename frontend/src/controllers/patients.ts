@@ -1,5 +1,5 @@
 import { PatientFormValues } from '../components/AddPatientModal/AddPatientForm';
-import { Patient } from '../types/types';
+import { Entry, NewEntry, Patient } from '../types/types';
 import axios from './';
 
 export const getPatients = async (): Promise<Patient[]> => {
@@ -32,12 +32,12 @@ export const deletePatient = async (id: string) => {
     await axios.delete(`/patients/${id}`);
 };
 
-export const putPatientEntry = async (patientId: string, entryId: string, entry: any) => {
-    const response = await axios.put<Patient>(`/patients/${patientId}/entries/${entryId}`, { id: entryId, ...entry });
+export const putPatientEntry = async (patientId: string, entryId: string, entry: Entry) => {
+    const response = await axios.put<Patient>(`/patients/${patientId}/entries/${entryId}`, { ...entry, id: entryId });
     return response.data;
 };
 
-export const postPatientEntry = async (patientId: string, entry: any) => {
+export const postPatientEntry = async (patientId: string, entry: NewEntry) => {
     const response = await axios.post<Patient>(`/patients/${patientId}/entries`, entry);
     return response.data;
 };

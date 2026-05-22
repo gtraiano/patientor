@@ -57,9 +57,10 @@ const SearchICDCode = () => {
                 );
                 
             }
-            catch(error: any) {
+            catch(error: unknown) {
                 console.log(error);
-                setResults({ results: [], terms: terms, error: error.message as string });
+                const message = error instanceof Error ? error.message : 'An error occurred';
+                setResults({ results: [], terms: terms, error: message });
                 setFetching(false);
             }
         }
@@ -71,8 +72,9 @@ const SearchICDCode = () => {
             dispatch(addDiagnosis({ code: diagnosis.name, name: diagnosis.desc }));
             setAdded(added.map((a, i) => i !== index ? a : true));
         }
-        catch(error: any) {
-            setResults({ terms: terms, results: results, error: error.message as string });
+        catch(error: unknown) {
+            const message = error instanceof Error ? error.message : 'An error occurred';
+            setResults({ terms: terms, results: results, error: message });
         }
         
     };

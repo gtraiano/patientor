@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios, { deletePatient, deletePatientEntry, postPatientEntry, putPatient, putPatientEntry } from "../../controllers";
 import { useParams } from "react-router";
 import { useStateValue } from "../../state";
-import { Gender, Patient, EntryType, Entry } from "../../types/types";
+import { Gender, Patient, EntryType, Entry, NewEntry } from "../../types/types";
 import { Button, CardGroup, Confirm, ConfirmProps, DropdownProps, Icon, Loader, Select, Table } from "semantic-ui-react";
 import PatientEntryCard, { EntryAction } from "../../components/PatientEntryCard";
 import AddPatientEntry from "../../components/AddPatientEntryModal";
@@ -161,10 +161,10 @@ const PatientInfo = () => {
         try {
             let response;
             if(initialValues && values?.id) { // edit existing entry
-                response = await putPatientEntry(patientId, values.id, newEntry);
+                response = await putPatientEntry(patientId, values.id, newEntry as unknown as Entry);
             }
             else { // post new entry
-                response = await postPatientEntry(patientId, newEntry);
+                response = await postPatientEntry(patientId, newEntry as NewEntry);
                 
             }
             dispatch(addPatient(response));

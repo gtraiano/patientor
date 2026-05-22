@@ -18,10 +18,10 @@ const DiagnosisListPage = () => {
   const [modalInitialValues, setModalInitialValues] = React.useState<Diagnosis | undefined>(); // intitial values to pass on edit
 
   const actions: GenericAction<Diagnosis>[] = [ // actions for diagnosis
-    { label: 'edit', iconName: 'edit', arg: 'code', callback: code => void loadValuesToModal(code) },
+    { label: 'edit', iconName: 'edit', arg: 'code', callback: (code: string | undefined) => code && void loadValuesToModal(code) },
     { label: 'delete', iconName: 'trash',
       arg: 'code',
-      callback: (code: string) => openConfirm(
+      callback: (code: string | undefined) => code && openConfirm(
         `Delete diagnosis ${code} ${diagnoses[code].name}?`,
         () => {
           void deleteDiagnosis(code);

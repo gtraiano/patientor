@@ -160,11 +160,7 @@ const App = () => {
 			})
 			.then(() => {
 				// Auto-login after registration
-				new Promise(resolve => {
-					resolve(setTimeout(() => {
-						submitCredentials(username, password);
-					}, 1500));
-				});
+				setTimeout(() => submitCredentials(username, password), 1500);
 			})
 			.catch(error => {
 				if (axios.isAxiosError(error)) {
