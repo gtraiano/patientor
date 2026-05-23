@@ -5,6 +5,7 @@ import RefreshToken from '../models/RefreshToken';
 import { uid } from 'rand-token';
 import { RefreshToken as IRefreshToken } from '../types';
 import config from '../config';
+import { setSession, deleteSession } from './sessions';
 
 export class InvalidCredentials extends Error {
     constructor(message = 'invalid username or password') {
@@ -41,7 +42,7 @@ const loginUser = async (userObj: { username: string, password: string }) => {
         username: user.username,
         id: String(user._id),
         name: user.name,
-        roles: user.roles.map(role => role.name as string)
+        roles: user.roles.map(role => role.name)
     };
     // generate access token
     const signOptions: SignOptions = { expiresIn: config.accessToken.expiresIn as SignOptions['expiresIn'] };
@@ -68,6 +69,7 @@ const loginUser = async (userObj: { username: string, password: string }) => {
         }
         else throw error;
     }
+    setSession(refreshToken.userId, refreshToken);
     
     return {
         accessToken,
@@ -76,6 +78,7 @@ const loginUser = async (userObj: { username: string, password: string }) => {
 };
 
 const logoutUser = async (userId: string) => {
+    deleteSession(userId);
     return await RefreshToken.findOneAndDelete({ userId });
 };
 
@@ -102,7 +105,8 @@ const refreshAccessToken = async (refreshToken: IRefreshToken) => {
 };
 
 const revokeRefreshToken = async (token: string): Promise<void> => {
-    await RefreshToken.findOneAndDelete({ token });
+    const revoked = await RefreshToken.findOneAndDelete({ token });
+    revoked && deleteSession(revoked.userId);
 };
 
 export default {

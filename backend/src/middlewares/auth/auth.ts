@@ -7,6 +7,7 @@ import { DecodedAccessToken, RefreshToken as IRefreshToken } from '../../types';
 import { preventExecution, RequestMethod } from './rules';
 import { asyncHandler } from '../util';
 import { extractAccessToken } from '../permissions/helper';
+import { getSession, setSession } from '../../services/sessions';
 
 // returns authorization token value from Request object
 const extractAuthToken = (request: Request): string | null => {
@@ -19,7 +20,7 @@ const extractAuthToken = (request: Request): string | null => {
 
 // decode access token and append it to Request object
 function decodeAccessToken(req: Request, _res: Response, next: NextFunction) {
-    if(preventExecution(decodeAccessToken.name, req.method as RequestMethod, req.path)) return next();
+    if (preventExecution(decodeAccessToken.name, req.method as RequestMethod, req.path)) return next();
     try {
         const token = extractAuthToken(req);
         const decodedToken = jwt.verify(token as string, config.security.keys.ACCESS_TOKEN_SIGN_KEY as string) as DecodedAccessToken;
@@ -30,7 +31,7 @@ function decodeAccessToken(req: Request, _res: Response, next: NextFunction) {
         Object.defineProperty(req, config.accessToken.name, { value: decodedToken, writable: false });
         next();
     }
-    catch(error) {
+    catch (error) {
         return next(error);
     }
 }
@@ -38,8 +39,17 @@ function decodeAccessToken(req: Request, _res: Response, next: NextFunction) {
 const isUserLoggedIn = async (request: Request, _response: Response, next: NextFunction) => {
     // logged in user should currently have a refresh token stored in db
     const { id } = extractAccessToken(request);
-    const loggedIn = await RefreshToken.findOne({ userId: id });
-    if(!loggedIn) {
+    let loggedIn = getSession(id);
+    if (!loggedIn) {
+        const fromDb = await RefreshToken.findOne({ userId: id });
+        console.log("Cache miss, retrieved from db");
+        if (fromDb) {
+            setSession(id, fromDb.toJSON() as unknown as IRefreshToken);
+            loggedIn = getSession(id);
+        }
+    }
+
+    if (!loggedIn) {
         return next(new JsonWebTokenError('invalid refresh token'));
     }
     next();
@@ -47,29 +57,29 @@ const isUserLoggedIn = async (request: Request, _response: Response, next: NextF
 
 async function _verifyRefreshToken(request: Request, _response: Response, next: NextFunction) {
     // refresh token verification will not be run for certain path/method combinations
-    if(preventExecution(verifyRefreshToken.name, request.method as RequestMethod, request.path)) return next();
-    
+    if (preventExecution(verifyRefreshToken.name, request.method as RequestMethod, request.path)) return next();
+
     try {
         // refresh token is sent as a cookie
         const refreshToken = request.cookies[config.refreshToken.cookie.name] as IRefreshToken;
         // lookup in DB
-        const retrieved = await RefreshToken.findOne({ token: refreshToken.token });
-        if(!retrieved || retrieved.userId !== refreshToken.userId) {
+        const retrieved = getSession(refreshToken.userId) ?? await RefreshToken.findOne({ token: refreshToken.token });
+        if (!retrieved || retrieved.userId !== refreshToken.userId) {
             return next(new JsonWebTokenError('invalid refresh token'));
         }
         console.log('verify refresh token for user id', retrieved.userId);
         // check refresh token is still alive (trust token from db)
-        if(new Date(retrieved.expires) < new Date()) {
+        if (new Date(retrieved.expires) < new Date()) {
             // remove expired token from DB
             await authServices.revokeRefreshToken(retrieved.token);
-            throw new TokenExpiredError('refresh token expired', new Date(request.cookies[config.refreshToken.cookie.name].expires*1000));
+            throw new TokenExpiredError('refresh token expired', new Date(request.cookies[config.refreshToken.cookie.name].expires * 1000));
         }
         // verify against sign key
         jwt.verify(refreshToken.token, config.security.keys.REFRESH_TOKEN_SIGN_KEY as string);
         console.log('refresh token is valid');
         next();
     }
-    catch(error: any) {
+    catch (error: any) {
         console.log('refresh token is invalid');
         console.log(error.message);
         return next(error);
