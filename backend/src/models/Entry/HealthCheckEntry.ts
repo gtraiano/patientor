@@ -13,7 +13,7 @@ export const HealthCheckEntrySchema = new Schema<HealthCheckEntryDoc>(
             type: Number,
             required: true,
             enum: {
-                values: Object.values(HealthCheckRating),
+                values: Object.values(HealthCheckRating).filter(v => typeof v === 'number'),
                 message: '{VALUE} is not supported'
             }
         }
