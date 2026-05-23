@@ -5,7 +5,7 @@ import { HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry } from '..
 import { HospitalEntryDoc } from '../models/Entry/HospitalEntry';
 import { HealthCheckEntryDoc } from '../models/Entry/HealthCheckEntry';
 import { OccupationalHealthcareEntryDoc } from '../models/Entry/OccupationalHealthcareEntry';
-import { Schema } from 'mongoose';
+import { Schema, Types } from 'mongoose';
 import BaseEntry from '../models/Entry/BaseEntry';
 
 const getPatients = async (): Promise<Array<PublicPatient>> => {
@@ -24,7 +24,7 @@ const addPatient = async (patient: NewPatient): Promise<Patient> => {
 };
 
 const removePatient = async (id: string): Promise<void> => {
-    await PatientModel.findByIdAndRemove(id);
+    await PatientModel.findByIdAndDelete(id);
 };
 
 const editPatient = async (id: string, data: unknown): Promise<Patient> => {
@@ -57,7 +57,7 @@ const addEntry = async (authorId: string, patientdId: string, entry: NewEntry): 
         default:
             throw Error(`Entry type must be [${Object.values(EntryType).join(', ')}]`);
     }
-    toSave.patientId = patient._id as Schema.Types.ObjectId;
+    toSave.patientId = patient._id as Types.ObjectId;
     toSave.authorId =  authorId as unknown as Schema.Types.ObjectId;
     await toSave.save();
     

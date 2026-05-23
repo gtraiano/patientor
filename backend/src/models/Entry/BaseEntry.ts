@@ -1,9 +1,9 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 import { EntryType, BaseEntry } from '../../types';
 
 export interface BaseEntryDoc extends BaseEntry, Document {
     id: string,
-    patientId: Schema.Types.ObjectId,
+    patientId: Types.ObjectId,
     authorId: Schema.Types.ObjectId
 }
 
@@ -52,8 +52,8 @@ export const BaseEntrySchema: Schema = new Schema<BaseEntryDoc>(
 );
 
 BaseEntrySchema.set('toJSON', {
-    transform: (_document, returnedObject) => {
-        returnedObject.id = (returnedObject._id as string).toString();
+    transform: (_document, returnedObject: Record<string, unknown>) => {
+        returnedObject.id = String(returnedObject._id);
         delete returnedObject._id;
         delete returnedObject.__v;
     }

@@ -20,12 +20,13 @@ const DiagnosisSchema = new Schema<Diagnosis>({
 
 DiagnosisSchema.set('toJSON', {
     transform: (_document, returnedObject) => {
-      returnedObject.id = returnedObject._id as string;
-      delete returnedObject._id;
-      delete returnedObject.__v;
+        const obj = returnedObject as unknown as Record<string, unknown>;
+        obj.id = String(returnedObject._id);
+        delete obj._id;
+        delete obj.__v;
     }
 });
 
 DiagnosisSchema.plugin(mongooseUniqueValidator);
 
-export default mongoose.model<Diagnosis & mongoose.Document>('Diagnosis', DiagnosisSchema, 'Diagnoses');
+export default mongoose.model<Diagnosis>('Diagnosis', DiagnosisSchema, 'Diagnoses');

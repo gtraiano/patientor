@@ -13,7 +13,7 @@ export class CustomError extends Error {
 
 const authErrorHandler = (error: any, _request: Request, response: Response, next: NextFunction) => {
     if (error.name === 'CastError') {
-        return response.status(400).json({ error: 'malformatted id' || error.message });
+        return response.status(400).json({ error: 'malformatted id' });
     }
     else if (error.name === 'ValidationError') {
         return response.status(400).json({ error: (error as Error).message });

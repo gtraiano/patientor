@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
 import RefreshToken from '../models/RefreshToken';
@@ -39,12 +39,13 @@ const loginUser = async (userObj: { username: string, password: string }) => {
     // prepare access token payload
     const userForToken = {
         username: user.username,
-        id: user._id as string,
+        id: String(user._id),
         name: user.name,
         roles: user.roles.map(role => role.name as string)
     };
     // generate access token
-    const accessToken = jwt.sign(userForToken, process.env.ACCESS_TOKEN_KEY as string, { expiresIn: config.accessToken.expiresIn });
+    const signOptions: SignOptions = { expiresIn: config.accessToken.expiresIn as SignOptions['expiresIn'] };
+    const accessToken = jwt.sign(userForToken, process.env.ACCESS_TOKEN_KEY as string, signOptions);
     
     // generate & save refresh token
     const refreshToken = generateRefreshToken(user.id as string, config.refreshToken.cookie.methods.expires());
@@ -90,12 +91,13 @@ const refreshAccessToken = async (refreshToken: IRefreshToken) => {
     
     const userForToken = {
         username: user.username,
-        id: user._id as string,
+        id: String(user._id),
         name: user.name,
         roles: user.roles.map(role => role.name as string)
     };
     // generate new access token
-    const accessToken = jwt.sign(userForToken, config.security.keys.ACCESS_TOKEN_SIGN_KEY as string, { expiresIn: config.accessToken.expiresIn });
+    const signOptions: SignOptions = { expiresIn: config.accessToken.expiresIn as SignOptions['expiresIn'] };
+    const accessToken = jwt.sign(userForToken, process.env.ACCESS_TOKEN_KEY as string, signOptions);
     return accessToken;
 };
 

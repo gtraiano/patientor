@@ -27,7 +27,6 @@
     "@types/cookie-parser": "latest",
     "@types/dotenv-safe": "latest",
     "@types/jsonwebtoken": "latest",
-    "@types/mongoose-unique-validator": "latest",
     "axios": "latest",
     "bcrypt": "latest",
     "cookie-parser": "latest",

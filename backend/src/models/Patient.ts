@@ -47,22 +47,23 @@ PatientSchema.virtual<typeof BaseEntrySchema[]>('entries', {
 });
 
 const healthRating = (entries: Entry[]): HealthCheckRating => {
-    if(!entries) return HealthCheckRating.Undetermined;
+    if (!entries) return HealthCheckRating.Undetermined;
     const healthCheck = entries.filter((e: Entry) => e.type === EntryType.HealthCheck).map((e: Entry) => (e as HealthCheckEntry).healthCheckRating);
-    if(!healthCheck || !healthCheck.length) return HealthCheckRating.Undetermined;
+    if (!healthCheck || !healthCheck.length) return HealthCheckRating.Undetermined;
     return Math.round(healthCheck.reduce((acc: number, cur: number) => acc + cur, 0) / healthCheck.length) as HealthCheckRating;
 };
 
-PatientSchema.virtual('healthRating').get(function(this: PatientDoc): ReturnType<typeof healthRating> {
+PatientSchema.virtual('healthRating').get(function (this: PatientDoc): ReturnType<typeof healthRating> {
     return healthRating(this.entries);
 });
 
 PatientSchema.set('toJSON', {
     virtuals: true,
     transform: (_document, returnedObject) => {
-      returnedObject.id = (returnedObject._id as string).toString();
-      delete returnedObject._id;
-      delete returnedObject.__v;
+        const obj = returnedObject as unknown as Record<string, unknown>;
+        obj.id = String(returnedObject._id);
+        delete obj._id;
+        delete obj.__v;
     }
 });
 
@@ -72,7 +73,7 @@ PatientSchema.method('toPublicPatient', function (this: PatientDoc): Promise<Pub
     // populate entries so that healthRating calulation is correct
     return this.populate('entries').then(pop => {
         return {
-            id: (pop._id as string).toString(),
+            id: (pop._id).toString(),
             name: pop.name,
             dateOfBirth: pop.dateOfBirth,
             gender: pop.gender,
