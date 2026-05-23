@@ -40,9 +40,14 @@ export const middlewareRules: MiddlewareExecutionPreventionRules = {
         'PUT': [
             { path: `${config.routes.api.root}${config.routes.api.auth}`, prevent: false },
         ],
+        'POST': [
+            // login and register do not have a refresh token yet
+            { path: `${config.routes.api.root}${config.routes.api.auth}`, prevent: true },
+            { path: `${config.routes.api.root}${config.routes.api.users}`, prevent: true }
+        ],
         // do not execute on all other methods and paths
         '*': [
-            { path: /.*/g, prevent: true }
+            { path: /.*/, prevent: true }
         ]
     }
 };

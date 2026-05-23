@@ -1,4 +1,4 @@
-import Layer, { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 
 // https://stackoverflow.com/questions/61086833/async-await-in-express-middleware
 export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => (req: Request, res: Response, next: NextFunction) => {
@@ -8,19 +8,19 @@ export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunctio
 // check if all middlewares in names are included in app stack
 // https://stackoverflow.com/questions/26304234/check-if-a-given-middleware-is-being-used
 export const isMiddlewareInUse = (req: Request, names: string[]): boolean => {
-    const stack = req.app._router.stack as Array<typeof Layer> ?? [];
+    const stack = req.app.router.stack;
     return stack.map(({ name }) => name).filter(n => names.includes(n)).length === names.length;
 };
 
 // get middleware indexes in app stack
 export const middlewareIndex = (req: Request, names: string[]): number[] => {
-    const stack = req.app._router.stack as Array<typeof Layer> ?? [];
+    const stack = req.app.router.stack;
     return stack.reduce<number[]>((idx, { name }, i) => names.includes(name) ? [...idx, i]: idx, []);
 };
 
 // removes middleware by name from app stack
 export const unloadMiddleware = (req: Request, name: string) => {
-    const stack = req.app._router.stack as Array<typeof Layer> ?? [];
+    const stack = req.app.router.stack;
     const idx = stack.findIndex(m => m.name === name);
     idx !== -1 && stack.splice(idx, 1);
 };
